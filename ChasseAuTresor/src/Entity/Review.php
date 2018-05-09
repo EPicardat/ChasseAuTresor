@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +27,16 @@ class Review
      * @ORM\Column(type="text", nullable=true)
      */
     private $review;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonneReviewPartie", mappedBy="Review")
+     */
+    private $personneReviewParties;
+
+    public function __construct()
+    {
+        $this->personneReviewParties = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -51,6 +63,37 @@ class Review
     public function setReview(?string $review): self
     {
         $this->review = $review;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PersonneReviewPartie[]
+     */
+    public function getPersonneReviewParties(): Collection
+    {
+        return $this->personneReviewParties;
+    }
+
+    public function addPersonneReviewParty(PersonneReviewPartie $personneReviewParty): self
+    {
+        if (!$this->personneReviewParties->contains($personneReviewParty)) {
+            $this->personneReviewParties[] = $personneReviewParty;
+            $personneReviewParty->setReview($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonneReviewParty(PersonneReviewPartie $personneReviewParty): self
+    {
+        if ($this->personneReviewParties->contains($personneReviewParty)) {
+            $this->personneReviewParties->removeElement($personneReviewParty);
+            // set the owning side to null (unless already changed)
+            if ($personneReviewParty->getReview() === $this) {
+                $personneReviewParty->setReview(null);
+            }
+        }
 
         return $this;
     }

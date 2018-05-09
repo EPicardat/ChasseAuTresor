@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="17567972-5370-423c-bfe7-5d37d7fe25d5" name="Default" comment="" />
+    <list default="true" id="17567972-5370-423c-bfe7-5d37d7fe25d5" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php" beforeDir="false" afterPath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Personnes.php" beforeDir="false" afterPath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Personnes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Review.php" beforeDir="false" afterPath="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Review.php" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,11 +35,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Parties.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Parties.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="397">
-              <caret line="103" column="32" selection-start-line="103" selection-start-column="32" selection-end-line="103" selection-end-column="32" />
+            <state relative-caret-position="1128">
+              <caret line="288" column="9" selection-start-line="288" selection-start-column="9" selection-end-line="288" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Version20180509094756.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509094756.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="28" selection-start-line="28" selection-end-line="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PersonneRolePartie.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/PersonneRolePartie.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -49,6 +72,7 @@
       <list>
         <option value="$PROJECT_DIR$/ChasseAuTresor/.env" />
         <option value="$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php" />
+        <option value="$PROJECT_DIR$/ChasseAuTresor/src/Entity/PersonneRolePartie.php" />
       </list>
     </option>
   </component>
@@ -234,21 +258,20 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525856976578</updated>
-      <workItem from="1525856978839" duration="3048000" />
+      <workItem from="1525856978839" duration="5521000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3048000" />
+    <option name="totallyTimeSpent" value="5521000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" visible="true" weight="0.32908705" />
+      <window_info active="true" anchor="bottom" id="Event Log" side_tool="true" visible="true" weight="0.32908705" />
       <window_info anchor="right" id="Database" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" />
@@ -302,16 +325,27 @@
     <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509093054.php">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509094756.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509100131.php">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="103" column="32" selection-start-line="103" selection-start-column="32" selection-end-line="103" selection-end-column="32" />
+        <state relative-caret-position="1128">
+          <caret line="288" column="9" selection-start-line="288" selection-start-column="9" selection-end-line="288" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509094756.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/PersonneRolePartie.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
         </state>
       </provider>
     </entry>

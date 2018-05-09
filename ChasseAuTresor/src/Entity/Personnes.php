@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,6 +47,28 @@ class Personnes
      * @ORM\Column(type="datetime")
      */
     private $date_inscription;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonneRolePartie", mappedBy="PersonneId")
+     */
+    private $personneRoleParties;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonneReviewPartie", mappedBy="Personne")
+     */
+    private $personneReviewParties;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonneGpsPartie", mappedBy="Personne")
+     */
+    private $personneGpsParties;
+
+    public function __construct()
+    {
+        $this->personneRoleParties = new ArrayCollection();
+        $this->personneReviewParties = new ArrayCollection();
+        $this->personneGpsParties = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -119,6 +143,99 @@ class Personnes
     public function setDateInscription(\DateTimeInterface $date_inscription): self
     {
         $this->date_inscription = $date_inscription;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PersonneRolePartie[]
+     */
+    public function getPersonneRoleParties(): Collection
+    {
+        return $this->personneRoleParties;
+    }
+
+    public function addPersonneRoleParty(PersonneRolePartie $personneRoleParty): self
+    {
+        if (!$this->personneRoleParties->contains($personneRoleParty)) {
+            $this->personneRoleParties[] = $personneRoleParty;
+            $personneRoleParty->setPersonne($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonneRoleParty(PersonneRolePartie $personneRoleParty): self
+    {
+        if ($this->personneRoleParties->contains($personneRoleParty)) {
+            $this->personneRoleParties->removeElement($personneRoleParty);
+            // set the owning side to null (unless already changed)
+            if ($personneRoleParty->getPersonne() === $this) {
+                $personneRoleParty->setPersonne(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PersonneReviewPartie[]
+     */
+    public function getPersonneReviewParties(): Collection
+    {
+        return $this->personneReviewParties;
+    }
+
+    public function addPersonneReviewParty(PersonneReviewPartie $personneReviewParty): self
+    {
+        if (!$this->personneReviewParties->contains($personneReviewParty)) {
+            $this->personneReviewParties[] = $personneReviewParty;
+            $personneReviewParty->setPersonne($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonneReviewParty(PersonneReviewPartie $personneReviewParty): self
+    {
+        if ($this->personneReviewParties->contains($personneReviewParty)) {
+            $this->personneReviewParties->removeElement($personneReviewParty);
+            // set the owning side to null (unless already changed)
+            if ($personneReviewParty->getPersonne() === $this) {
+                $personneReviewParty->setPersonne(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PersonneGpsPartie[]
+     */
+    public function getPersonneGpsParties(): Collection
+    {
+        return $this->personneGpsParties;
+    }
+
+    public function addPersonneGpsParty(PersonneGpsPartie $personneGpsParty): self
+    {
+        if (!$this->personneGpsParties->contains($personneGpsParty)) {
+            $this->personneGpsParties[] = $personneGpsParty;
+            $personneGpsParty->setPersonne($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonneGpsParty(PersonneGpsPartie $personneGpsParty): self
+    {
+        if ($this->personneGpsParties->contains($personneGpsParty)) {
+            $this->personneGpsParties->removeElement($personneGpsParty);
+            // set the owning side to null (unless already changed)
+            if ($personneGpsParty->getPersonne() === $this) {
+                $personneGpsParty->setPersonne(null);
+            }
+        }
 
         return $this;
     }
