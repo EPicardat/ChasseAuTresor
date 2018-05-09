@@ -30,11 +30,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Version20180509093054.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509093054.php">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
       <file leaf-file-name="Parties.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php">
           <provider selected="true" editor-type-id="text-editor">
@@ -239,12 +234,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1525856976578</updated>
-      <workItem from="1525856978839" duration="2749000" />
+      <workItem from="1525856978839" duration="3048000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2749000" />
+    <option name="totallyTimeSpent" value="3048000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -305,6 +300,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509093054.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509094756.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Migrations/Version20180509100131.php">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/ChasseAuTresor/src/Entity/Parties.php">
