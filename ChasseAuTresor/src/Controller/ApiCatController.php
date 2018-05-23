@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Indices;
 use App\Entity\Parties;
+use App\Entity\PersonneGpsPartie;
+use App\Entity\PropositionGPS;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -16,14 +19,14 @@ class ApiCatController extends Controller
      */
     public function getPartie(Request $request)
     {
-        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $q =$request->query->get('q');
-        $parties=$partieRepo->find($q);
+        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $id =$request->query->get('id');
+        $partie=$partiesRepo->find($id);
 
         return $this->json([
             "status"=>"ok",
             "message"=>"",
-            "data"=>$parties,
+            "data"=>$partie,
         ]);
     }
 
@@ -60,47 +63,63 @@ class ApiCatController extends Controller
 
     /**
      * @Route("/apiCat/v1/submitLocGPS", name="submit_loc_gps", methods={"GET"})
+     *  @param $request
+     * @param $latitudeSoumise
+     * @param $longitudeSoumise
+     * @param $accuracySoumise
+     * @return array
      */
     public function submitLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
+        $listeIndices = null;
+
         // On enregistre les coordonnées dans la la table propositionGPS
         $this->setLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
         // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
         $found = $this->compareLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
-        return $found;
+        // Si $found est faux : on récupère le nombre de propositions déjà soumises
+        // et on paramètre la liste d'indices en fonction.
+
+        if (!$found){
+            $listeIndices = $this->getClues($request);
+        }
+
+        // Le tableau $answer contient à la fois le booléen $found et le tableau d'indices. Par défaut, $answer contient (false, null)
+        $answer = array($found, $listeIndices);
+        return $answer;
     }
 
+    // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
     private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
     //TODO
     }
 
+    // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
     private function compareLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
-    //TODO
-
         // On set le booléen à faux par défault
         $found = false;
 
         // On récupère les coordonnées solutions
-        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
         $id =$request->query->get('id');
-        $partie=$partieRepo->find($id);
+        $partie=$partiesRepo->find($id);
 
         $latitudeSolution = $partie->getLatitude();
         $longitudeSolution = $partie->getLongitude();
         $accuracySolution = $partie->getAccuracy();
 
-        // On compare les deux accuracies. On travaille avec la plus grandes des deux.
+        // On compare les deux accuracies. On travaille avec la plus grande des deux.
         $accuracyUtile = $accuracySoumise;
         if($accuracySolution>$accuracySoumise){
             $accuracyUtile = $accuracySolution;
         }
 
         // On récupère la distance à vol d'oiseau en mètre (orthodromique) entre la position soumise et la position solution
-        $d = distance_orthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution);
+        $d = $this->distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution);
 
         // Si la $d est inférieure ou égale à l'accuracy utile, le joueur a bien trouvé le lieu du trésor : on passe le booléen $found à true
         if ($d<= $accuracyUtile){
@@ -111,7 +130,8 @@ class ApiCatController extends Controller
         return $found;
     }
 
-    private function distance_orthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
+    // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
+    private function distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
     {
         // La variable $r correspond au rayon de la Terre.
         // $latitudeSoumise, $longitudeSoumise sont les latitudes des points respectifs.
@@ -136,7 +156,40 @@ class ApiCatController extends Controller
         // On récupère la valeur du résutat arrondi avec la précision.
         $d =  round($r*$c,  $precision)*1000;
 
-        // On renvoie la distance en mètres
+        // On renvoie la distance en metres
         return $d;
+    }
+
+    // Fonction permettant de récupérer la liste d'indices
+    private function getClues(Request $request)
+    {
+        $listeIndices = null;
+
+        // On récupere le nombre de soumission(s) déjà effectuée(s)
+        $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
+        $id =$request->query->get('id');
+        $who =$request->query->get('who');
+        $nbProposition=$PersonnneGPSPartiesRepo->countProposition($id,$who);
+
+        //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
+        if ($nbProposition>=3){
+
+            $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
+            $id =$request->query->get('id');
+            $indice=$indicesRepo->getClue1($id);
+
+            $listeIndices[0] = $indice;
+        }
+
+        // Si ce nombre est supérieur à 6, on recupère les deux indices, et on les set dans la liste.
+        if ($nbProposition>=6){
+
+            $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
+            $id =$request->query->get('id');
+            $indice=$indicesRepo->getClue2($id);
+
+            $listeIndices[1] = $indice;
+        }
+        return $listeIndices;
     }
 }

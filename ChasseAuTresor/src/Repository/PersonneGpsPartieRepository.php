@@ -19,32 +19,12 @@ class PersonneGpsPartieRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonneGpsPartie::class);
     }
 
-//    /**
-//     * @return PersonneGpsPartie[] Returns an array of PersonneGpsPartie objects
-//     */
-    /*
-    public function findByExampleField($value)
+    // Cette fonction compte le nombre de propositions GPS déjà soumises et enregistrées dans la BDD
+    public function countProposition($id,$who)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        //TODO
 
-    /*
-    public function findOneBySomeField($value): ?PersonneGpsPartie
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $nbProposition=0;
+        return $nbProposition;
     }
-    */
 }
