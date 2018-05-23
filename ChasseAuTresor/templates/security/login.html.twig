@@ -1,16 +1,26 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-{% if error %}
-    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-{% endif %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
-<form action="{{ path('login') }}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="_username" value="" />
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="_password" />
-    <button type="submit">login</button>
-</form>
+    <form action="{{ path('login') }}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="_username" value="" />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password" />
+        <button type="submit">login</button>
+    </form>
+
+    <a href="{{ path('user_registration') }}">Sign up !</a>
 {% endblock %}

@@ -251,6 +251,7 @@ class Personnes implements UserInterface, \Serializable
         return serialize(array(
             $this->id,
             $this->username,
+            $this->pseudo,
             $this->password,
             // see section on salt below
             // $this->salt,
@@ -262,6 +263,7 @@ class Personnes implements UserInterface, \Serializable
         list (
             $this->id,
             $this->username,
+            $this->pseudo,
             $this->password,
             // see section on salt below
             // $this->salt
@@ -276,6 +278,15 @@ class Personnes implements UserInterface, \Serializable
     public function getPassword()
     {
         return $this->password;
+    }
+
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password): void
+    {
+        $this->password = $password;
     }
 
     public function getSalt()
