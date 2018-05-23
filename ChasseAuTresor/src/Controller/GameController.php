@@ -16,6 +16,8 @@ class GameController extends Controller
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
         $partie = $partieRepo->find($id);
 
+
+        // Renvoyer du json !
         return $this->render('game/game.html.twig', [
             'controller_name' => 'GameController',
             "id" => $id,
