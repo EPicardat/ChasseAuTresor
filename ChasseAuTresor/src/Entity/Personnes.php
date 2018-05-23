@@ -250,7 +250,6 @@ class Personnes implements UserInterface, \Serializable
     {
         return serialize(array(
             $this->id,
-            $this->username,
             $this->pseudo,
             $this->password,
             // see section on salt below
@@ -262,7 +261,6 @@ class Personnes implements UserInterface, \Serializable
     {
         list (
             $this->id,
-            $this->username,
             $this->pseudo,
             $this->password,
             // see section on salt below

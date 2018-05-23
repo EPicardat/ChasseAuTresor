@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello {{ controller_name }}!{% endblock %}
+
+{% block body %}
+<div>
+    <h1>{{ partie.nom }}</h1>
+    <div>Créé : {{ partie.getDateDebut()|date("d-m-Y")}}</div>
+
+    <blockquote class="imgur-embed-pub" lang="en" data-id="WOSKFcp"><a href="{{partie.photo}}">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+</div>
+{% endblock %}
