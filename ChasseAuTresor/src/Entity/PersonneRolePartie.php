@@ -23,7 +23,7 @@ class PersonneRolePartie
     private $Personne;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\role")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Role")
      * @ORM\JoinColumn(nullable=false)
      */
     private $role;
