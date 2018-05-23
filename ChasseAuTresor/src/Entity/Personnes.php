@@ -239,4 +239,62 @@ class Personnes
 
         return $this;
     }
+<<<<<<< Updated upstream
+=======
+
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->pseudo,
+            $this->password,
+            // see section on salt below
+            // $this->salt,
+        ));
+    }
+
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->pseudo,
+            $this->password,
+            // see section on salt below
+            // $this->salt
+            ) = unserialize($serialized, ['allowed_classes' => false]);
+    }
+
+    public function getRoles()
+    {
+        return array("ROLE_USER");
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password): void
+    {
+        $this->password = $password;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getUsername()
+    {
+        return $this->pseudo;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+>>>>>>> Stashed changes
 }
