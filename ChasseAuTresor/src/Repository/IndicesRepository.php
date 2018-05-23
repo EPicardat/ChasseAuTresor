@@ -19,32 +19,14 @@ class IndicesRepository extends ServiceEntityRepository
         parent::__construct($registry, Indices::class);
     }
 
-//    /**
-//     * @return Indices[] Returns an array of Indices objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function getClue1($id)
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+       //TODO
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Indices
+    public function getClue2($id)
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        //TODO
     }
-    */
+
 }
