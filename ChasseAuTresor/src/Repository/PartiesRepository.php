@@ -19,6 +19,27 @@ class PartiesRepository extends ServiceEntityRepository
         parent::__construct($registry, Parties::class);
     }
 
+    public function findBasic($id)
+    {
+        //On construit requête via QueryBuilder
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a.nom');
+        $qb->addSelect('a.dateDebut');
+        $qb->addSelect('a.dateFin');
+        $qb->addSelect('a.photo');
+        $qb->where('a.id = :id');
+        $query=$qb->getQuery();
+
+        // On injecte le paramètre $id dans la query
+        $query->setParameter("id",'%'.$id.'%');
+
+        // On récupère la réponse à la requête
+        // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
+        $result=$query->getArrayResult();
+
+        return $result;
+    }
+
     /**
      * @param $id
      * @return array
@@ -27,7 +48,7 @@ class PartiesRepository extends ServiceEntityRepository
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
-        $qb->select(a.messageFin);
+        $qb->select('a.messageFin');
         $qb->where('a.id = :id');
         $query=$qb->getQuery();
 

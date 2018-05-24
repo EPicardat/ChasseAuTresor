@@ -23,7 +23,7 @@ class IndicesRepository extends ServiceEntityRepository
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
-        $qb->select(a.indice);
+        $qb->select('a.indice');
         $qb->where('a.id = :id');
         $query=$qb->getQuery();
 

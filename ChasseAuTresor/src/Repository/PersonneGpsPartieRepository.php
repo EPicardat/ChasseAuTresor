@@ -30,7 +30,7 @@ class PersonneGpsPartieRepository extends ServiceEntityRepository
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
-        $qb->select($qb->expr()->count(a));
+        $qb->select($qb->expr()->count('a'));
         $qb->where('a.id = :id');
         $qb->andWhere('a.Personne = :who');
         $query=$qb->getQuery();

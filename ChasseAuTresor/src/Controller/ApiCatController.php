@@ -6,15 +6,14 @@ use App\Entity\Indices;
 use App\Entity\Parties;
 use App\Entity\PersonneGpsPartie;
 use App\Entity\PropositionGPS;
-use Symfony\Component\Console\Descriptor\JsonDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ApiCatController extends Controller
 {
+    // Fonction qui récupère toutes les infos de la partie
     /**
-     * @Route("/game/{id}", name="game", methods={"GET"})
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -30,6 +29,27 @@ class ApiCatController extends Controller
             "data" => $partie,
         ]);
     }
+
+    // Fonction qui récupère les infos de base de la partie
+    /**
+     * @Route("/game/{id}", name="game", methods={"GET"})
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getPartieBasic(Request $request)
+    {
+        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $id = $request->query->get('id');
+        $partie = $partiesRepo->findBasic($id);
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $partie,
+        ]);
+    }
+
+    // Fonction qui sauvegarde les paramètres d'une nouvelle partie
 
     /**
      * @Route("/apiCat/v1/setPartie", name="set_partie", methods={"POST"})
