@@ -218,4 +218,22 @@ class ApiCatController extends Controller
             "data" => $partie,
         ]);
     }
+
+    /**
+     * @Route("/chasses", name="huntList", methods={"GET"})
+     */
+    public function getGameList(Request $request)
+    {
+        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $partie = $partieRepo->findBy(
+            array('resolue' => 0)
+        );
+
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $partie,
+        ]);
+    }
 }
