@@ -192,4 +192,18 @@ class ApiCatController extends Controller
         }
         return $listeIndices;
     }
+
+    /**
+     * @Route("/game/{id}", name="game", requirements={"id":"[0-9]{1,12}"})
+     */
+    public function getGameInfo($id) {
+        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $partie = $partieRepo->find($id);
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $partie,
+        ]);
+    }
 }
