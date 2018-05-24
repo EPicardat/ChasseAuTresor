@@ -33,10 +33,6 @@ class Parties
      */
     private $date_fin;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $resolue;
 
     /**
      * @ORM\Column(type="boolean")
@@ -128,18 +124,6 @@ class Parties
     public function setDateFin(?\DateTimeInterface $date_fin): self
     {
         $this->date_fin = $date_fin;
-
-        return $this;
-    }
-
-    public function getResolue(): ?bool
-    {
-        return $this->resolue;
-    }
-
-    public function setResolue(bool $resolue): self
-    {
-        $this->resolue = $resolue;
 
         return $this;
     }
