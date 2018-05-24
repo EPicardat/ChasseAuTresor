@@ -79,6 +79,11 @@ class Parties
      */
     private $personneGpsParties;
 
+    /**
+     * @ORM\Column(type="decimal", precision=5, scale=2)
+     */
+    private $accuracy;
+
     public function __construct()
     {
         $this->personneRoleParties = new ArrayCollection();
@@ -308,6 +313,18 @@ class Parties
                 $personneGpsParty->setPartie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAccuracy()
+    {
+        return $this->accuracy;
+    }
+
+    public function setAccuracy($accuracy): self
+    {
+        $this->accuracy = $accuracy;
 
         return $this;
     }

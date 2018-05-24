@@ -289,6 +289,7 @@ class ApiCatController extends Controller
         return $listeIndices;
     }
 
+
     /**
      * @Route("/chasses", name="huntList", methods={"GET"})
      */
