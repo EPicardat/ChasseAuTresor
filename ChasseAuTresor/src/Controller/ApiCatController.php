@@ -17,7 +17,7 @@ class ApiCatController extends Controller
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getPartie(Request $request)
+    public function getGame(Request $request)
     {
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
         $id = $request->query->get('id');
@@ -31,12 +31,13 @@ class ApiCatController extends Controller
     }
 
     // Fonction qui récupère les infos de base de la partie
+
     /**
      * @Route("/game/{id}", name="game", methods={"GET"})
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getPartieBasic(Request $request)
+    public function getGameInfo(Request $request)
     {
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
         $id = $request->query->get('id');
@@ -88,7 +89,7 @@ class ApiCatController extends Controller
      * @param $latitudeSoumise
      * @param $longitudeSoumise
      * @param $accuracySoumise
-     * @return bool
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function submitLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
@@ -98,7 +99,29 @@ class ApiCatController extends Controller
         // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
         $found = $this->compareLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
-        return $found;
+        $nbProposition = null;
+        $indice1 = null;
+        $indice2 = null;
+        $messageFin = null;
+
+        if ($found) {
+            $messageFin = $this->getSuccessMessage($request);
+            $this->setResolved();
+        } else {
+            $listeIndices = $this->getClues($request);
+            $nbProposition =  $listeIndices[0];
+            $indice1 = $listeIndices[1];
+            $indice2 = $listeIndices[2];
+        }
+
+        $answer = array($found, $nbProposition, $indice1, $indice2, $messageFin);
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $answer,
+        ]);
+
     }
 
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
@@ -107,7 +130,6 @@ class ApiCatController extends Controller
      * @param Request $request
      * @param $latitudeSoumise
      * @param $longitudeSoumise
-     * @param $accuracySoumise
      */
     private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise)
     {
@@ -160,7 +182,6 @@ class ApiCatController extends Controller
             $found = true;
         }
 
-        // On renvoie le booléen $found
         return $found;
     }
 
@@ -208,19 +229,15 @@ class ApiCatController extends Controller
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return string
      */
-    public function getSuccessMessage(Request $request)
+    private function getSuccessMessage(Request $request)
     {
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
         $id = $request->query->get('id');
         $messageFin = $partieRepo->findSuccessMessage($id);
 
-        return $this->json([
-            "status" => "ok",
-            "message" => "",
-            "data" => $messageFin,
-        ]);
+        return $messageFin;
     }
 
     // Fonction permettant de récupérer la liste d'indices.
@@ -228,7 +245,7 @@ class ApiCatController extends Controller
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return array
      */
 
     public function getClues(Request $request)
@@ -269,17 +286,13 @@ class ApiCatController extends Controller
                 }
             }
         }
-        return $this->json([
-            "status" => "ok",
-            "message" => "",
-            "data" => $listeIndices,
-        ]);
+        return $listeIndices;
     }
 
     /**
      * @Route("/chasses", name="huntList", methods={"GET"})
      */
-    public function getGameList(Request $request)
+    public function getGameList()
     {
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
         $partie = $partieRepo->findBy(
