@@ -19,12 +19,30 @@ class PersonneGpsPartieRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonneGpsPartie::class);
     }
 
-    // Cette fonction compte le nombre de propositions GPS déjà soumises et enregistrées dans la BDD
-    public function countProposition($id,$who)
-    {
-        //TODO
+    // Cette fonction compte le nombre de propositions GPS déjà soumise(s) et enregistrée(s) dans la BDD
 
-        $nbProposition=0;
-        return $nbProposition;
+    /**
+     * @param $id
+     * @param $who
+     * @return int
+     */
+    public function countProposition($id, $who)
+    {
+        //On construit requête via QueryBuilder
+        $qb = $this->createQueryBuilder('a');
+        $qb->select($qb->expr()->count(a));
+        $qb->where('a.id = :id');
+        $qb->andWhere('a.Personne = :who');
+        $query=$qb->getQuery();
+
+        // On injecte les paramètres $id et $who dans la query
+        $query->setParameter("id",'%'.$id.'%');
+        $query->setParameter("who",'%'.$who.'%');
+
+        // On récupère la réponse à la requête
+        $result=$query->getResult();
+
+        return $result;
+
     }
 }

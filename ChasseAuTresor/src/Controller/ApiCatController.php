@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Indices;
 use App\Entity\Parties;
 use App\Entity\PersonneGpsPartie;
-use App\Entity\PropositionGPS;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -131,7 +130,16 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
-    private function distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
+
+    /**
+     * @param $latitudeSoumise
+     * @param $latitudeSolution
+     * @param $longitudeSoumise
+     * @param $longitudeSolution
+     * @param $precision = 3
+     * @param $r = 6378.14
+     * @return double
+     */ private function distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
     {
         // La variable $r correspond au rayon de la Terre.
         // $latitudeSoumise, $longitudeSoumise sont les latitudes des points respectifs.
@@ -161,6 +169,10 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de récupérer la liste d'indices
+    /**
+     * @param Request $request
+     * @return array $listeIndices
+     */
     private function getClues(Request $request)
     {
         $listeIndices = null;
