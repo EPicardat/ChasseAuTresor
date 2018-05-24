@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ApiCatController extends Controller
 {
     /**
-     * @Route("/apiCat/v1/getPartie", name="get_partie", methods={"GET"})
+     * @Route("/game/{id}", name="game", methods={"GET"})
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -203,20 +203,6 @@ class ApiCatController extends Controller
             $listeIndices[1] = $indice;
         }
         return $listeIndices;
-    }
-
-    /**
-     * @Route("/game/{id}", name="game", requirements={"id":"[0-9]{1,12}"})
-     */
-    public function getGameInfo($id) {
-        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $partie = $partieRepo->find($id);
-
-        return $this->json([
-            "status" => "ok",
-            "message" => "",
-            "data" => $partie,
-        ]);
     }
 
     /**
