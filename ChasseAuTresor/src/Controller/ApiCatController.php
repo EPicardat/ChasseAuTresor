@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Indices;
 use App\Entity\Parties;
 use App\Entity\PersonneGpsPartie;
+use App\Entity\PropositionGPS;
+use Symfony\Component\Console\Descriptor\JsonDescriptor;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -66,37 +68,50 @@ class ApiCatController extends Controller
      * @param $latitudeSoumise
      * @param $longitudeSoumise
      * @param $accuracySoumise
-     * @return array
+     * @return bool
      */
     public function submitLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
-        $listeIndices = null;
-
         // On enregistre les coordonnées dans la la table propositionGPS
-        $this->setLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
+        $this->setLocGPS($request, $latitudeSoumise, $longitudeSoumise);
 
         // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
         $found = $this->compareLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
-        // Si $found est faux : on récupère le nombre de propositions déjà soumises
-        // et on paramètre la liste d'indices en fonction.
-
-        if (!$found) {
-            $listeIndices = $this->getClues($request);
-        }
-
-        // Le tableau $answer contient à la fois le booléen $found et le tableau d'indices. Par défaut, $answer contient (false, null)
-        $answer = array($found, $listeIndices);
-        return $answer;
+        return $found;
     }
 
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
-    private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
+
+    /**
+     * @param Request $request
+     * @param $latitudeSoumise
+     * @param $longitudeSoumise
+     * @param $accuracySoumise
+     */
+    private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise)
     {
-        //TODO
+        $propositionGPS = new PropositionGPS();
+        $propositionGPS->setLatitude($latitudeSoumise);
+        $propositionGPS->setLongitude($longitudeSoumise);
+        $propositionGPS->setPersonne($request->query->get('personne'));
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($propositionGPS);
+        $em->flush();
+
+        //TODO update la table jointe !
     }
 
     // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
+
+    /**
+     * @param Request $request
+     * @param $latitudeSoumise
+     * @param $longitudeSoumise
+     * @param $accuracySoumise
+     * @return bool
+     */
     private function compareLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
         // On set le booléen à faux par défault
@@ -169,21 +184,44 @@ class ApiCatController extends Controller
         return $d;
     }
 
-    // Fonction permettant de récupérer la liste d'indices
+    // Fonction permettant de récuperer le message de fin de jeu; lorsque la position du trésor a été trouvée
 
     /**
      * @param Request $request
-     * @return array $listeIndices
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    private function getClues(Request $request)
+    public function getSuccessMessage(Request $request)
+    {
+        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $id = $request->query->get('id');
+        $messageFin = $partieRepo->findSuccessMessage($id);
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $messageFin,
+        ]);
+    }
+
+    // Fonction permettant de récupérer la liste d'indices.
+    // Le tabeau $listeIndices contient : le nombre de propositions soumises, le premier indice, le second indice.
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+
+    public function getClues(Request $request)
     {
         $listeIndices = null;
 
         // On récupere le nombre de soumission(s) déjà effectuée(s)
         $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
         $id = $request->query->get('id');
-        $who = $request->query->get('who');
-        $nbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $who);
+        $personne = $request->query->get('personne');
+        $nbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
+
+        $listeIndices[0] = $nbProposition;
 
         //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
         if ($nbProposition >= 3) {
@@ -195,9 +233,9 @@ class ApiCatController extends Controller
 
             // Si le premier élément de l'array n'est pas null (
             if (empty($indices[0])) {
-                $listeIndices[0] = "Pas d'indice disponible pour cette chasse ! Courage !";
+                $listeIndices[1] = "Pas d'indice disponible pour cette chasse ! Courage !";
             } else {
-                $listeIndices[0] = $indices[0]->getIndice;
+                $listeIndices[1] = $indices[0]->getIndice;
             }
 
             // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
@@ -205,19 +243,24 @@ class ApiCatController extends Controller
 
                 // Si le second élément de l'array n'est pas null (
                 if (empty($indices[1])) {
-                    $listeIndices[1] = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
+                    $listeIndices[2] = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
                 } else {
-                    $listeIndices[1] = $indices[1]->getIndice;
+                    $listeIndices[2] = $indices[1]->getIndice;
                 }
             }
         }
-        return $listeIndices;
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $listeIndices,
+        ]);
     }
 
     /**
      * @Route("/game/{id}", name="game", requirements={"id":"[0-9]{1,12}"})
      */
-    public function getGameInfo($id) {
+    public function getGameInfo($id)
+    {
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
         $partie = $partieRepo->find($id);
 

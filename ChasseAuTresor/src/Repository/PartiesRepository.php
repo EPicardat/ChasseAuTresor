@@ -18,4 +18,26 @@ class PartiesRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Parties::class);
     }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function findSuccessMessage($id)
+    {
+        //On construit requête via QueryBuilder
+        $qb = $this->createQueryBuilder('a');
+        $qb->select(a.messageFin);
+        $qb->where('a.id = :id');
+        $query=$qb->getQuery();
+
+        // On injecte le paramètre $id dans la query
+        $query->setParameter("id",'%'.$id.'%');
+
+        // On récupère la réponse à la requête
+        // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
+        $result=$query->getArrayResult();
+
+        return $result;
+    }
 }
