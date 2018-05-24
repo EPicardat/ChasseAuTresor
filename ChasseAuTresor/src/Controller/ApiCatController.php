@@ -276,6 +276,10 @@ class ApiCatController extends Controller
         ]);
     }
 
+    public function setResolve($id, $$personne) {
+        TODO
+    }
+
     /**
      * @Route("/chasses", name="huntList", methods={"GET"})
      */
