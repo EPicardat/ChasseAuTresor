@@ -19,14 +19,22 @@ class IndicesRepository extends ServiceEntityRepository
         parent::__construct($registry, Indices::class);
     }
 
-    public function getClue1($id)
+    public function getClues($id)
     {
-       //TODO
-    }
+        //On construit requête via QueryBuilder
+        $qb = $this->createQueryBuilder('a');
+        $qb->select(a.indice);
+        $qb->where('a.id = :id');
+        $query=$qb->getQuery();
 
-    public function getClue2($id)
-    {
-        //TODO
+        // On injecte le paramètre $id dans la query
+        $query->setParameter("id",'%'.$id.'%');
+
+        // On récupère la réponse à la requête
+        // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
+        $result=$query->getArrayResult();
+
+        return $result;
     }
 
 }

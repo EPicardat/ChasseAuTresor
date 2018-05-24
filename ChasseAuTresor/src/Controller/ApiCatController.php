@@ -19,13 +19,13 @@ class ApiCatController extends Controller
     public function getPartie(Request $request)
     {
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id =$request->query->get('id');
-        $partie=$partiesRepo->find($id);
+        $id = $request->query->get('id');
+        $partie = $partiesRepo->find($id);
 
         return $this->json([
-            "status"=>"ok",
-            "message"=>"",
-            "data"=>$partie,
+            "status" => "ok",
+            "message" => "",
+            "data" => $partie,
         ]);
     }
 
@@ -37,32 +37,32 @@ class ApiCatController extends Controller
     public function setPartie(Request $request)
     {
         // On crée une instance de partie vide
-        $partie=new Parties();
+        $partie = new Parties();
         // on crée le formulaire et lui associe notre instance de partie vide
-        $form=$this->createForm(Parties::class,$partie);
+        $form = $this->createForm(Parties::class, $partie);
         // On prend les données du formulaire et les injecte dans la partie vide
         $form->handleRequest($request);
 
         // On récupère et set la date actuelle (== date début de partie)
         $partie->setDateDebut(new \DateTime());
 
-        if($form->isSubmitted()&& $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($partie);
             $em->flush();
             return $this->redirectToRoute(""
-                //TODO
+            //TODO
             );
         }
-        return $this->render("",[
-            "form"=>$form->createView()
-                //TODO
+        return $this->render("", [
+            "form" => $form->createView()
+            //TODO
         ]);
     }
 
     /**
      * @Route("/apiCat/v1/submitLocGPS", name="submit_loc_gps", methods={"GET"})
-     *  @param $request
+     * @param $request
      * @param $latitudeSoumise
      * @param $longitudeSoumise
      * @param $accuracySoumise
@@ -81,7 +81,7 @@ class ApiCatController extends Controller
         // Si $found est faux : on récupère le nombre de propositions déjà soumises
         // et on paramètre la liste d'indices en fonction.
 
-        if (!$found){
+        if (!$found) {
             $listeIndices = $this->getClues($request);
         }
 
@@ -93,7 +93,7 @@ class ApiCatController extends Controller
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
     private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
-    //TODO
+        //TODO
     }
 
     // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
@@ -104,8 +104,8 @@ class ApiCatController extends Controller
 
         // On récupère les coordonnées solutions
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id =$request->query->get('id');
-        $partie=$partiesRepo->find($id);
+        $id = $request->query->get('id');
+        $partie = $partiesRepo->find($id);
 
         $latitudeSolution = $partie->getLatitude();
         $longitudeSolution = $partie->getLongitude();
@@ -113,7 +113,7 @@ class ApiCatController extends Controller
 
         // On compare les deux accuracies. On travaille avec la plus grande des deux.
         $accuracyUtile = $accuracySoumise;
-        if($accuracySolution>$accuracySoumise){
+        if ($accuracySolution > $accuracySoumise) {
             $accuracyUtile = $accuracySolution;
         }
 
@@ -121,7 +121,7 @@ class ApiCatController extends Controller
         $d = $this->distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution);
 
         // Si la $d est inférieure ou égale à l'accuracy utile, le joueur a bien trouvé le lieu du trésor : on passe le booléen $found à true
-        if ($d<= $accuracyUtile){
+        if ($d <= $accuracyUtile) {
             $found = true;
         }
 
@@ -139,7 +139,8 @@ class ApiCatController extends Controller
      * @param $precision = 3
      * @param $r = 6378.14
      * @return double
-     */ private function distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
+     */
+    private function distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution, $precision = 3, $r = 6378.14)
     {
         // La variable $r correspond au rayon de la Terre.
         // $latitudeSoumise, $longitudeSoumise sont les latitudes des points respectifs.
@@ -158,17 +159,18 @@ class ApiCatController extends Controller
         $dlong = $longitudeSolution - $latitudeSolution;
 
         // On applique la formule.
-        $a = sin($dlat/2)*sin($dlat/2) + cos($latitudeSoumise)*cos($longitudeSoumise)*sin($dlong/2)*sin($dlong/2);
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $a = sin($dlat / 2) * sin($dlat / 2) + cos($latitudeSoumise) * cos($longitudeSoumise) * sin($dlong / 2) * sin($dlong / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         // On récupère la valeur du résutat arrondi avec la précision.
-        $d =  round($r*$c,  $precision)*1000;
+        $d = round($r * $c, $precision) * 1000;
 
         // On renvoie la distance en metres
         return $d;
     }
 
     // Fonction permettant de récupérer la liste d'indices
+
     /**
      * @param Request $request
      * @return array $listeIndices
@@ -179,28 +181,35 @@ class ApiCatController extends Controller
 
         // On récupere le nombre de soumission(s) déjà effectuée(s)
         $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $id =$request->query->get('id');
-        $who =$request->query->get('who');
-        $nbProposition=$PersonnneGPSPartiesRepo->countProposition($id,$who);
+        $id = $request->query->get('id');
+        $who = $request->query->get('who');
+        $nbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $who);
 
         //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
-        if ($nbProposition>=3){
+        if ($nbProposition >= 3) {
 
+            // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
-            $id =$request->query->get('id');
-            $indice=$indicesRepo->getClue1($id);
+            $id = $request->query->get('id');
+            $indices = $indicesRepo->getClues($id);
 
-            $listeIndices[0] = $indice;
-        }
+            // Si le premier élément de l'array n'est pas null (
+            if (empty($indices[0])) {
+                $listeIndices[0] = "Pas d'indice disponible pour cette chasse ! Courage !";
+            } else {
+                $listeIndices[0] = $indices[0]->getIndice;
+            }
 
-        // Si ce nombre est supérieur à 6, on recupère les deux indices, et on les set dans la liste.
-        if ($nbProposition>=6){
+            // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
+            if ($nbProposition >= 6) {
 
-            $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
-            $id =$request->query->get('id');
-            $indice=$indicesRepo->getClue2($id);
-
-            $listeIndices[1] = $indice;
+                // Si le second élément de l'array n'est pas null (
+                if (empty($indices[1])) {
+                    $listeIndices[1] = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
+                } else {
+                    $listeIndices[1] = $indices[1]->getIndice;
+                }
+            }
         }
         return $listeIndices;
     }
