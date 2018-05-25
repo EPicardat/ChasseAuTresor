@@ -6,13 +6,14 @@ use App\Entity\Indices;
 use App\Entity\Parties;
 use App\Entity\PersonneGpsPartie;
 use App\Entity\PropositionGPS;
+use App\Form\GameCreatorType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ApiCatController extends Controller
 {
-    // Fonction qui récupère toutes les infos de la partie
+    // Fonction qui récupère TOUTES les infos de la partie
     /**
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -30,7 +31,7 @@ class ApiCatController extends Controller
         ]);
     }
 
-    // Fonction qui récupère les infos de base de la partie
+    // Fonction qui récupère les infos DE BASE de la partie
 
     /**
      * @Route("/game/{id}", name="game", methods={"GET"})
@@ -50,54 +51,79 @@ class ApiCatController extends Controller
         ]);
     }
 
-    // Fonction qui sauvegarde les paramètres d'une nouvelle partie
-
     /**
-     * @Route("/apiCat/v1/setPartie", name="set_partie", methods={"POST"})
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Route("/gameList", name="gameList", methods={"GET"})
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function setPartie(Request $request)
+    public function getGameList()
+        //TODO à modifier une fois la BDD opérationnelle
     {
-        // On crée une instance de partie vide
-        $partie = new Parties();
-        // on crée le formulaire et lui associe notre instance de partie vide
-        $form = $this->createForm(Parties::class, $partie);
-        // On prend les données du formulaire et les injecte dans la partie vide
-        $form->handleRequest($request);
+        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+        $partie = $partieRepo->findBy(
+            array('resolue' => 0)
+        );
 
-        // On récupère et set la date actuelle (== date début de partie)
-        $partie->setDateDebut(new \DateTime());
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($partie);
-            $em->flush();
-            return $this->redirectToRoute(""
-            //TODO
-            );
-        }
-        return $this->render("", [
-            "form" => $form->createView()
-            //TODO
+        return $this->json([
+            "status" => "ok",
+            "message" => "",
+            "data" => $partie,
         ]);
     }
 
+    // Fonction qui sauvegarde les paramètres d'une nouvelle partie
+
     /**
-     * @Route("/apiCat/v1/submitLocGPS", name="submit_loc_gps", methods={"GET"})
+     * @Route("/setGame", name="setGame", methods={"POST"})
+     * @param Request $request
+     */
+    public function setPartie(Request $request)
+    {
+        $nom = $request->query->get('nom');
+        $latitude = $request->query->get('lat');
+        $longitude = $request->query->get('lon');
+        $accuracy = $request->query->get('acc');
+        $photo = $request->query->get('img');
+        $messageFin = $request->query->get('messageFin');
+        $dateDebut = $request->query->get('debut');
+        $dateFin = $request->query->get('fin');
+
+        $indice1 = $request->query->get('ind1');
+        $indice2 = $request->query->get('ind2');
+        $personne = $request->query->get('personne');
+
+        $partie = new Parties();
+        $partie->setNom($nom);
+        $partie->setLatitude($latitude);
+        $partie->setLongitude($longitude);
+        $partie->setAccuracy($accuracy);
+        $partie->setPhoto($photo);
+        $partie->setMessageFin($messageFin);
+        $partie->setDateDebut($dateDebut);
+        $partie->setDateFin($dateFin);
+
+
+
+
+    }
+
+    /**
+     * @Route("/submitLoc", name="submitLoc", methods={"POST"})
      * @param $request
-     * @param $latitudeSoumise
-     * @param $longitudeSoumise
-     * @param $accuracySoumise
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function submitLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
+    public function submitLoc(Request $request)
     {
+        $id = $request->query->get('id');
+        $personne = $request->query->get('personne');
+        $latitudeSoumise = $request->query->get('lat');
+        $longitudeSoumise = $request->query->get('lon');
+        $accuracySoumise = $request->query->get('acc');
+
         // On enregistre les coordonnées dans la la table propositionGPS
-        $this->setLocGPS($request, $latitudeSoumise, $longitudeSoumise);
+        $this->setLoc($id, $personne, $latitudeSoumise, $longitudeSoumise);
 
         // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
-        $found = $this->compareLocGPS($request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
+        $found = $this->compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
         $nbProposition = null;
         $indice1 = null;
@@ -105,11 +131,11 @@ class ApiCatController extends Controller
         $messageFin = null;
 
         if ($found) {
-            $messageFin = $this->getSuccessMessage($request);
-            $this->setResolved();
+            $messageFin = $this->getSuccessMessage($id);
+            $this->setResolved($id, $personne);
         } else {
-            $listeIndices = $this->getClues($request);
-            $nbProposition =  $listeIndices[0];
+            $listeIndices = $this->getClues($id, $personne);
+            $nbProposition = $listeIndices[0];
             $indice1 = $listeIndices[1];
             $indice2 = $listeIndices[2];
         }
@@ -127,16 +153,18 @@ class ApiCatController extends Controller
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
 
     /**
-     * @param Request $request
+     * @param $id
+     * @param $personne
      * @param $latitudeSoumise
      * @param $longitudeSoumise
      */
-    private function setLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise)
+    private function setLoc($id, $personne, $latitudeSoumise, $longitudeSoumise)
     {
         $propositionGPS = new PropositionGPS();
         $propositionGPS->setLatitude($latitudeSoumise);
         $propositionGPS->setLongitude($longitudeSoumise);
-        $propositionGPS->setPersonne($request->query->get('personne'));
+        //TODO BDD
+        $propositionGPS->setPersonne($personne);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($propositionGPS);
@@ -148,20 +176,19 @@ class ApiCatController extends Controller
     // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
 
     /**
-     * @param Request $request
+     * @param $id
      * @param $latitudeSoumise
      * @param $longitudeSoumise
      * @param $accuracySoumise
      * @return bool
      */
-    private function compareLocGPS(Request $request, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
+    private function compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise)
     {
         // On set le booléen à faux par défault
         $found = false;
 
         // On récupère les coordonnées solutions
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id = $request->query->get('id');
         $partie = $partiesRepo->find($id);
 
         $latitudeSolution = $partie->getLatitude();
@@ -174,7 +201,7 @@ class ApiCatController extends Controller
             $accuracyUtile = $accuracySolution;
         }
 
-        // On récupère la distance à vol d'oiseau en mètre (orthodromique) entre la position soumise et la position solution
+        // On récupère la distance à vol d'oiseau en mètre(orthodromique) entre la position soumise et la position solution
         $d = $this->distanceOrthodromique($latitudeSoumise, $latitudeSolution, $longitudeSoumise, $longitudeSolution);
 
         // Si la $d est inférieure ou égale à l'accuracy utile, le joueur a bien trouvé le lieu du trésor : on passe le booléen $found à true
@@ -231,10 +258,9 @@ class ApiCatController extends Controller
      * @param Request $request
      * @return string
      */
-    private function getSuccessMessage(Request $request)
+    private function getSuccessMessage($id)
     {
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id = $request->query->get('id');
         $messageFin = $partieRepo->findSuccessMessage($id);
 
         return $messageFin;
@@ -244,18 +270,17 @@ class ApiCatController extends Controller
     // Le tabeau $listeIndices contient : le nombre de propositions soumises, le premier indice, le second indice.
 
     /**
-     * @param Request $request
+     * @param $id
+     * @param $personne
      * @return array
      */
 
-    public function getClues(Request $request)
+    public function getClues($id, $personne)
     {
         $listeIndices = null;
 
         // On récupere le nombre de soumission(s) déjà effectuée(s)
         $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $id = $request->query->get('id');
-        $personne = $request->query->get('personne');
         $nbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
 
         $listeIndices[0] = $nbProposition;
@@ -265,7 +290,6 @@ class ApiCatController extends Controller
 
             // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
-            $id = $request->query->get('id');
             $indices = $indicesRepo->getClues($id);
 
             // Si le premier élément de l'array n'est pas null (
@@ -289,22 +313,16 @@ class ApiCatController extends Controller
         return $listeIndices;
     }
 
+    // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PartiePersonne.
 
     /**
-     * @Route("/chasses", name="huntList", methods={"GET"})
+     * @param $id
+     * @param $personne
      */
-    public function getGameList()
+    private function setResolved($id, $personne)
     {
-        $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $partie = $partieRepo->findBy(
-            array('resolue' => 0)
-        );
-
-
-        return $this->json([
-            "status" => "ok",
-            "message" => "",
-            "data" => $partie,
-        ]);
+        //TODO
     }
+
+
 }

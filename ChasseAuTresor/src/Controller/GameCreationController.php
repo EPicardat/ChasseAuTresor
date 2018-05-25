@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class GameCreationController extends Controller
 {
     /**
-     * @Route("/creationChasse", name="creation")
+     * @Route("/create", name="creation")
      */
     public function register(Request $request)
     {
@@ -40,3 +40,4 @@ class GameCreationController extends Controller
             array('form' => $form->createView())
         );
     }
+}
