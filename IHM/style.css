@@ -1,0 +1,96 @@
+body{
+  background-color: #565656;
+  color: #FFF;
+  text-align: center;
+}
+.ng-animate-block-transitions {
+  transition:3s all!important;
+  -webkit-transition:3s all!important;
+}
+/* Connexion */
+
+      .connexion-form{
+        display: block;
+        flex-direction: column;
+      }
+
+/* Partie */
+
+      input{
+        width: 250px;
+      }
+
+      button{
+        width: 250px;
+      }
+
+      div{
+        margin: 20px auto;
+        width: 100%;
+
+      }
+
+      .divIndice {
+        padding: 10px;
+
+        background-color: #333;
+        min-height: 100px;
+        width: 90%;
+        max-width: 600px;
+        position: relative;
+        top: 0;
+        left: 0;
+        text-align: justify;
+      }
+
+      .loader {
+        border: 16px solid #565656;
+        border-radius: 50%;
+        border-top: 16px solid #f3f3f3;
+        width: 30px;
+        height: 30px;
+        -webkit-animation: spin 1s linear infinite; /* Safari */
+        animation: spin 1s linear infinite;
+      }
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      #map{
+        height: 300px;
+        width: 300px;
+      }
+
+/* Menu */
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+
+      li {
+        float: left;
+      }
+
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      li a:hover {
+        background-color: #111;
+      }
+

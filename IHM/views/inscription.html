@@ -1,0 +1,22 @@
+<div class="jumbotron text-center">
+  <h1>Inscription</h1>
+  <div><img src="img/carte.png" alt="carte" id="image-connexion"></div>
+
+  <form class="connexion-form">
+    <div>
+      <input type="text" ng-model="speudo" placeholder="speudo">
+    </div>
+    <div>
+      <input type="password" ng-model="passw1" placeholder="Password">
+    </div>
+    <div>
+      <input type="password" ng-model="passw2" placeholder="Repeat Password">
+    </div>
+
+    <button ng-disabled="error || incomplete">Save</button>
+  </form>
+
+
+  <div>{{ message }}</div>
+
+</div>

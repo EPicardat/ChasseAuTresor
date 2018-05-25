@@ -1,0 +1,50 @@
+<div class="jumbotron text-center">
+  <div ng-if="!partieSelect">
+    <h1>Parties</h1>
+
+    <div ng-repeat="partie in listeParties">
+      <button ng-click="selectPartie(partie)" ng-model="partie"> Partie {{partie.id}}</button>
+    </div>
+  </div>
+
+  <div ng-if="partieSelect">
+    <div>
+      <p>
+        Partie n° {{partieSelect.id}} : {{partieSelect.name}}
+      </p>
+    </div>
+
+    <div><img src="img/carte.png" alt="carte" id="image-connexion"></div>
+    <div ng-repeat="indice in indices">
+      <button ng-click="toggle(indice)"> Indice {{ indice.id }}</button>
+      <div class="divIndice" ng-hide="!indice.show">{{indice.text}}</div>
+    </div>
+
+    <div>
+      <button ng-click="findPosition()">Récupère ma position</button>
+    </div>
+
+    <div ng-if="recherche">
+      <div ng-if="attente" class="loader"></div>
+      <div ng-if="locationFind">
+        Votre position :
+        Latitude : {{locationCurrent.latitude}}
+        Longitude : {{locationCurrent.longitude}}
+        Précision : {{locationCurrent.accuracy}} meters.
+        <div id="map"></div>
+
+      </div>
+
+      <div ng-if="!attente && !locationFind">
+        {{messageErreur}}
+      </div>
+    </div>
+
+    <div>
+      <button ng-disabled="!locationFind" ng-click="soumettrePosition(locationCurrent)">Soumettre</button>
+    </div>
+
+  </div>
+
+  <p>{{ message }}</p>
+</div>

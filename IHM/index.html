@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- define angular app -->
+<html ng-app="scotchApp" lang="fr">
+
+<head>
+  <!-- SCROLLS -->
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- SPELLS -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-animate.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCuq1EOqcAhx4dDjdji29EHCDN53-Ij4YI" async defer></script>
+  <script src="app.js"></script>
+  <script src="controllers/homeCtrl.js"></script>
+  <script src="controllers/connexionCtrl.js"></script>
+  <script src="controllers/inscriptionCtrl.js"></script>
+  <script src="controllers/partieCtrl.js"></script>
+</head>
+
+<!-- define angular controller -->
+
+<body ng-controller="homeCtrl">
+
+<nav class="navigation">
+  <div>
+    <ul >
+      <li><a href="#">Home</a></li>
+      <li><a href="#partie">Partie</a></li>
+      <li><a href="#connexion">Connexion</a></li>
+      <li><a href="#inscription">Inscription</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div id="main">
+
+  <!-- angular templating -->
+  <!-- this is where content will be injected -->
+  <div ng-view></div>
+
+</div>
+
+<footer class="text-center">
+
+</footer>
+
+</body>
+
+</html>
