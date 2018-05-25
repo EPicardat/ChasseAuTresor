@@ -84,6 +84,11 @@ class Parties
      */
     private $accuracy;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\PersonnePartieResolue", inversedBy="Partie_Id")
+     */
+    private $personnePartieResolue;
+
     public function __construct()
     {
         $this->personneRoleParties = new ArrayCollection();
@@ -325,6 +330,18 @@ class Parties
     public function setAccuracy($accuracy): self
     {
         $this->accuracy = $accuracy;
+
+        return $this;
+    }
+
+    public function getPersonnePartieResolue(): ?PersonnePartieResolue
+    {
+        return $this->personnePartieResolue;
+    }
+
+    public function setPersonnePartieResolue(?PersonnePartieResolue $personnePartieResolue): self
+    {
+        $this->personnePartieResolue = $personnePartieResolue;
 
         return $this;
     }

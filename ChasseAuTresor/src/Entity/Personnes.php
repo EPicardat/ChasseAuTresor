@@ -69,6 +69,11 @@ class Personnes implements UserInterface, \Serializable
      */
     private $personneGpsParties;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\PersonnePartieResolue", inversedBy="Personne_id")
+     */
+    private $personnePartieResolue;
+
     public function __construct()
     {
         $this->personneRoleParties = new ArrayCollection();
@@ -300,5 +305,17 @@ class Personnes implements UserInterface, \Serializable
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getPersonnePartieResolue(): ?PersonnePartieResolue
+    {
+        return $this->personnePartieResolue;
+    }
+
+    public function setPersonnePartieResolue(?PersonnePartieResolue $personnePartieResolue): self
+    {
+        $this->personnePartieResolue = $personnePartieResolue;
+
+        return $this;
     }
 }
