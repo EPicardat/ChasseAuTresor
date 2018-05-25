@@ -55,11 +55,6 @@ class Personnes implements UserInterface, \Serializable
     private $date_inscription;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PersonneRolePartie", mappedBy="PersonneId")
-     */
-    private $personneRoleParties;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\PersonneReviewPartie", mappedBy="Personne")
      */
     private $personneReviewParties;
@@ -76,7 +71,6 @@ class Personnes implements UserInterface, \Serializable
 
     public function __construct()
     {
-        $this->personneRoleParties = new ArrayCollection();
         $this->personneReviewParties = new ArrayCollection();
         $this->personneGpsParties = new ArrayCollection();
     }
@@ -158,36 +152,6 @@ class Personnes implements UserInterface, \Serializable
         return $this;
     }
 
-    /**
-     * @return Collection|PersonneRolePartie[]
-     */
-    public function getPersonneRoleParties(): Collection
-    {
-        return $this->personneRoleParties;
-    }
-
-    public function addPersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if (!$this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties[] = $personneRoleParty;
-            $personneRoleParty->setPersonne($this);
-        }
-
-        return $this;
-    }
-
-    public function removePersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if ($this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties->removeElement($personneRoleParty);
-            // set the owning side to null (unless already changed)
-            if ($personneRoleParty->getPersonne() === $this) {
-                $personneRoleParty->setPersonne(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|PersonneReviewPartie[]
@@ -307,15 +271,4 @@ class Personnes implements UserInterface, \Serializable
         // TODO: Implement eraseCredentials() method.
     }
 
-    public function getPersonnePartieResolue(): ?PersonnePartieResolue
-    {
-        return $this->personnePartieResolue;
-    }
-
-    public function setPersonnePartieResolue(?PersonnePartieResolue $personnePartieResolue): self
-    {
-        $this->personnePartieResolue = $personnePartieResolue;
-
-        return $this;
-    }
 }

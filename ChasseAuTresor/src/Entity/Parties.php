@@ -60,11 +60,6 @@ class Parties
     private $message_fin;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PersonneRolePartie", mappedBy="Partie", orphanRemoval=true)
-     */
-    private $personneRoleParties;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\PersonneReviewPartie", mappedBy="Partie")
      */
     private $personneReviewParties;
@@ -91,7 +86,6 @@ class Parties
 
     public function __construct()
     {
-        $this->personneRoleParties = new ArrayCollection();
         $this->personneReviewParties = new ArrayCollection();
         $this->indices = new ArrayCollection();
         $this->personneGpsParties = new ArrayCollection();
@@ -194,37 +188,6 @@ class Parties
     public function setMessageFin(?string $message_fin): self
     {
         $this->message_fin = $message_fin;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PersonneRolePartie[]
-     */
-    public function getPersonneRoleParties(): Collection
-    {
-        return $this->personneRoleParties;
-    }
-
-    public function addPersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if (!$this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties[] = $personneRoleParty;
-            $personneRoleParty->setPartie($this);
-        }
-
-        return $this;
-    }
-
-    public function removePersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if ($this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties->removeElement($personneRoleParty);
-            // set the owning side to null (unless already changed)
-            if ($personneRoleParty->getPartie() === $this) {
-                $personneRoleParty->setPartie(null);
-            }
-        }
 
         return $this;
     }
