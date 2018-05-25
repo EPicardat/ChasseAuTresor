@@ -40,3 +40,4 @@ class GameCreationController extends Controller
             array('form' => $form->createView())
         );
     }
+}
