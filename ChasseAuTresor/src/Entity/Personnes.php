@@ -64,11 +64,6 @@ class Personnes implements UserInterface, \Serializable
      */
     private $personneGpsParties;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\PersonnePartieResolue", inversedBy="Personne_id")
-     */
-    private $personnePartieResolue;
-
     public function __construct()
     {
         $this->personneReviewParties = new ArrayCollection();

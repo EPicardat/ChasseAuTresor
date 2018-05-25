@@ -29,7 +29,7 @@ class Indices
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Parties", inversedBy="indices")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $partie;
 
