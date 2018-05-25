@@ -333,7 +333,7 @@ class ApiCatController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
-        
+
     }
 
     // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PartiePersonne.
