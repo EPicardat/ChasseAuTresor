@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class GameCreationController extends Controller
 {
     /**
-     * @Route("/creationChasse", name="creation")
+     * @Route("/create", name="creation")
      */
     public function register(Request $request)
     {
@@ -23,11 +23,7 @@ class GameCreationController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // 3) save the Game
-            $entityManager = $this->getDoctrine()->getManager();
-            $game->setDateDebut(new \DateTime());
-            $entityManager->persist($game);
-            $entityManager->flush();
+           //
 
             // Add a flash message to confirm the registration.
             $this->addFlash("success", "Your game has been created.");
