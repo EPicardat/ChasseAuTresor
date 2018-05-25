@@ -19,14 +19,14 @@ class PersonnePartieResolue
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Personnes", mappedBy="personnePartieResolue")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Personnes")
      */
-    private $Personne_id;
+    private $Personne;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Parties", mappedBy="personnePartieResolue")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Parties")
      */
-    private $Partie_Id;
+    private $Partie;
 
     /**
      * @ORM\Column(type="boolean")
@@ -40,8 +40,8 @@ class PersonnePartieResolue
 
     public function __construct()
     {
-        $this->Personne_id = new ArrayCollection();
-        $this->Partie_Id = new ArrayCollection();
+        $this->Personne = new ArrayCollection();
+        $this->Partie = new ArrayCollection();
     }
 
     public function getId()
@@ -52,15 +52,15 @@ class PersonnePartieResolue
     /**
      * @return Collection|Personnes[]
      */
-    public function getPersonneId(): Collection
+    public function getPersonne(): Collection
     {
-        return $this->Personne_id;
+        return $this->Personne;
     }
 
     public function addPersonneId(Personnes $personneId): self
     {
-        if (!$this->Personne_id->contains($personneId)) {
-            $this->Personne_id[] = $personneId;
+        if (!$this->Personne->contains($personneId)) {
+            $this->Personne[] = $personneId;
             $personneId->setPersonnePartieResolue($this);
         }
 
@@ -69,8 +69,8 @@ class PersonnePartieResolue
 
     public function removePersonneId(Personnes $personneId): self
     {
-        if ($this->Personne_id->contains($personneId)) {
-            $this->Personne_id->removeElement($personneId);
+        if ($this->Personne->contains($personneId)) {
+            $this->Personne->removeElement($personneId);
             // set the owning side to null (unless already changed)
             if ($personneId->getPersonnePartieResolue() === $this) {
                 $personneId->setPersonnePartieResolue(null);
@@ -83,15 +83,15 @@ class PersonnePartieResolue
     /**
      * @return Collection|Parties[]
      */
-    public function getPartieId(): Collection
+    public function getPartie(): Collection
     {
-        return $this->Partie_Id;
+        return $this->Partie;
     }
 
     public function addPartieId(Parties $partieId): self
     {
-        if (!$this->Partie_Id->contains($partieId)) {
-            $this->Partie_Id[] = $partieId;
+        if (!$this->Partie->contains($partieId)) {
+            $this->Partie[] = $partieId;
             $partieId->setPersonnePartieResolue($this);
         }
 
@@ -100,8 +100,8 @@ class PersonnePartieResolue
 
     public function removePartieId(Parties $partieId): self
     {
-        if ($this->Partie_Id->contains($partieId)) {
-            $this->Partie_Id->removeElement($partieId);
+        if ($this->Partie->contains($partieId)) {
+            $this->Partie->removeElement($partieId);
             // set the owning side to null (unless already changed)
             if ($partieId->getPersonnePartieResolue() === $this) {
                 $partieId->setPersonnePartieResolue(null);
