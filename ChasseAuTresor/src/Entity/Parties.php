@@ -60,11 +60,6 @@ class Parties
     private $message_fin;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PersonneRolePartie", mappedBy="Partie", orphanRemoval=true)
-     */
-    private $personneRoleParties;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\PersonneReviewPartie", mappedBy="Partie")
      */
     private $personneReviewParties;
@@ -84,9 +79,13 @@ class Parties
      */
     private $accuracy;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\PersonnePartieResolue", inversedBy="Partie_Id")
+     */
+    private $personnePartieResolue;
+
     public function __construct()
     {
-        $this->personneRoleParties = new ArrayCollection();
         $this->personneReviewParties = new ArrayCollection();
         $this->indices = new ArrayCollection();
         $this->personneGpsParties = new ArrayCollection();
@@ -194,37 +193,6 @@ class Parties
     }
 
     /**
-     * @return Collection|PersonneRolePartie[]
-     */
-    public function getPersonneRoleParties(): Collection
-    {
-        return $this->personneRoleParties;
-    }
-
-    public function addPersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if (!$this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties[] = $personneRoleParty;
-            $personneRoleParty->setPartie($this);
-        }
-
-        return $this;
-    }
-
-    public function removePersonneRoleParty(PersonneRolePartie $personneRoleParty): self
-    {
-        if ($this->personneRoleParties->contains($personneRoleParty)) {
-            $this->personneRoleParties->removeElement($personneRoleParty);
-            // set the owning side to null (unless already changed)
-            if ($personneRoleParty->getPartie() === $this) {
-                $personneRoleParty->setPartie(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|PersonneReviewPartie[]
      */
     public function getPersonneReviewParties(): Collection
@@ -325,6 +293,18 @@ class Parties
     public function setAccuracy($accuracy): self
     {
         $this->accuracy = $accuracy;
+
+        return $this;
+    }
+
+    public function getPersonnePartieResolue(): ?PersonnePartieResolue
+    {
+        return $this->personnePartieResolue;
+    }
+
+    public function setPersonnePartieResolue(?PersonnePartieResolue $personnePartieResolue): self
+    {
+        $this->personnePartieResolue = $personnePartieResolue;
 
         return $this;
     }
