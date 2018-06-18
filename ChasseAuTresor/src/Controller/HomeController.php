@@ -15,6 +15,7 @@ class HomeController extends Controller
 
         return $this->render('home/home.html.twig', [
             'controller_name' => 'HomeController',
+            'userId' => $this->getUser()->getId(),
         ]);
     }
 }
