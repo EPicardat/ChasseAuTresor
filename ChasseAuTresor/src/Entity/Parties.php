@@ -45,12 +45,12 @@ class Parties
     private $photo;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="float")
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="float")
      */
     private $longitude;
 
@@ -75,7 +75,7 @@ class Parties
     private $personneGpsParties;
 
     /**
-     * @ORM\Column(type="decimal", precision=5, scale=2)
+     * @ORM\Column(type="integer")
      */
     private $accuracy;
 

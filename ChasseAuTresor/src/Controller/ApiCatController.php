@@ -325,15 +325,15 @@ class ApiCatController extends Controller
      */
     private function setResolved($id, $personne)
     {
+        $criteria=[$id, $personne];
         $personnePartieResolueRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $personnePartieResolue= $personnePartieResolueRepo->findOneBy($id, $personne);
+        $personnePartieResolue = $personnePartieResolueRepo->findOneBy($criteria);
 
         $personnePartieResolue->setResolue(true);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
-
     }
 
     // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PartiePersonne.
@@ -360,23 +360,10 @@ class ApiCatController extends Controller
             // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
             $indices = $indicesRepo->getClues($id);
-
-            // Si le premier élément de l'array n'est pas null (
-            if (empty($indices[0])) {
-                $listeIndices[1] = "Pas d'indice disponible pour cette chasse ! Courage !";
-            } else {
-                $listeIndices[1] = $indices[0]->getIndice;
-            }
-
+            $listeIndices[1] = $indices[0]->getIndice;
             // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
             if ($nbProposition >= 6) {
-
-                // Si le second élément de l'array n'est pas null (
-                if (empty($indices[1])) {
-                    $listeIndices[2] = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
-                } else {
-                    $listeIndices[2] = $indices[1]->getIndice;
-                }
+                $listeIndices[2] = $indices[1]->getIndice;
             }
         }
         return $listeIndices;
