@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\IndicesRepository")
  */
-class Indices
+class Indices implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -73,4 +73,12 @@ class Indices
 
         return $this;
     }
+
+    public function jsonSerialize()
+    {
+        // TODO: Implement jsonSerialize() method.
+        return['indice'=>$this->getIndice()];
+
+    }
+
 }
