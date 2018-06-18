@@ -1,4 +1,4 @@
-scotchApp.controller('connexionCtrl', function($scope) {
+scotchApp.controller('inscriptionCtrl', function($scope) {
 
   $scope.message = '';
   $scope.speudo = '';

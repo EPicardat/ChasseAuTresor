@@ -20,13 +20,13 @@ scotchApp.config(function($routeProvider) {
 
     // route for the connexion page
     .when('/connexion', {
-      templateUrl : 'views/connexion.html',
+      templateUrl : 'http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/login',
       controller  : 'connexionCtrl'
     })
 
     // route for the inscription page
     .when('/inscription', {
-      templateUrl : 'views/inscription.html',
+      templateUrl : 'http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/register',
       controller  : 'inscriptionCtrl'
     });
 });

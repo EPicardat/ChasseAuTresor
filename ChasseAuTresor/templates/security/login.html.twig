@@ -12,15 +12,19 @@
             </div>
         {% endfor %}
     {% endfor %}
+    <div class="jumbotron text-center">
+    <h1>Connexion</h1>
+    <form action="{{ path('login') }}" method="post" class="connexion-form" >
 
-    <form action="{{ path('login') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="_username" value="" />
+        <input type="text" id="username" name="_username" value="" ng-model="speudo" placeholder="username"/>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password" />
+        <input type="password" id="password" name="_password" ng-model="passw1" placeholder="Password"/>
+
         <button type="submit">login</button>
+
+        <a href="{{ path('user_registration') }}">Sign up !</a>
     </form>
 
-    <a href="{{ path('user_registration') }}">Sign up !</a>
+
+    </div>
 {% endblock %}

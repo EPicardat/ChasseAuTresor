@@ -1,24 +1,37 @@
 scotchApp.controller('partieCtrl', function($scope, $http) {
 
-  //Creation du bouchon
-  $scope.listeParties = [{id: 1, name: 'nom partie 1', dateDeb: 'partie 1 date deb', dateEnd: 'partie 1 date fin', photo: 'url photo1'}, {id: 2, name: 'nom partie 2', dateDeb: 'partie 2 date deb', dateEnd: 'partie 2 date fin', photo: 'url photo2'}, {id: 3, name: 'nom partie 3', dateDeb: 'partie 3 date deb', dateEnd: 'partie 3 date fin', photo: 'url photo3'}, {id: 4, name: 'nom partie 4', dateDeb: 'partie 4 date deb', dateEnd: 'partie 4 date fin', photo: 'url photo4'}];
 
-
-
-  $scope.indices = [{id: 1,text: 'When data in the model changes, the view reflects the change, and when data in the view changes, the model is updated as well. This happens immediately and automatically, which makes sure that the model and the view is updated at all times.When data in the model changes, the view reflects the change, and when data in the view changes, the model is updated as well. This happens immediately and automatically, which makes sure that the model and the view is updated at all times.When data in the model changes, the view reflects the change, and when data in the view changes, the model is updated as well. This happens immediately and automatically, which makes sure that the model and the view is updated at all times.', show: false}, {id: 2,text: 'tata', show: false}, {id: 3, text: 'tutu', show: false}];
-
-
-
-  //
+  //Initialisation des variables
   $scope.partieSelect = '';
   $scope.showIndice = false;
   $scope.message = '';
   $scope.locationCurrent = '';
-  $scope.messageErreur = "Désolé une erreur c'est produite veuillez réessayer!!";
+  $scope.messageErreur = "Désolé une erreur s'est produite veuillez réessayer!!";
   $scope.recherche = false;
   $scope.attente = false;
   $scope.locationFind = false;
 
+  //Initialisation de la liste des parties
+
+  $scope.SearchPartie = function () {
+
+      $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/gameList', {
+          params:{
+            id : "1",
+          }
+      })
+          .success(function (status, message, data) {
+              $scope.Details = data;
+          })
+          .error(function (status, message, data) {
+              $scope.listeParties = data;
+              $scope.ResponseDetails = "Status: " + status +
+                  "<hr />Message: " + message +
+                  "<hr />data: " + data;
+          });
+  };
+
+  $scope.SearchPartie();
 
   $scope.selectPartie = function(partie) {
     $scope.partieSelect = partie;
@@ -29,9 +42,6 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
     $scope.indices[indice.id-1].show = !$scope.indices[indice.id-1].show;
   };
 
-  $onInit = function () {
-    $scope.partieSelect = partie;
-  };
 
   var map;
   $scope.map = function initMap(pos) {
@@ -85,7 +95,7 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
   $scope.SearchData = function () {
 
-    $http.get('http://localhost/chasseautresor/ChasseAuTresor/public/submitLoc', {
+    $http.get('http://localhost/Chasseautresor/ChasseAuTresor/public/submitLoc', {
       params:{
         lat : $scope.locationCurrent.latitude,
         long : $scope.locationCurrent.longitude
@@ -101,5 +111,6 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
           "<hr />config: " + config;
       });
   };
+
 
 });

@@ -62,7 +62,7 @@ class ApiCatController extends Controller
         $personne = $request->query->get('personne');
 
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $partie = $partieRepo->findGameList($id, $personne);
+        $partie = $partieRepo->findAll();
 
         return $this->json([
             "status" => "ok",
