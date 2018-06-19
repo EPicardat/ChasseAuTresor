@@ -19,27 +19,20 @@ class PartiesRepository extends ServiceEntityRepository
         parent::__construct($registry, Parties::class);
     }
 
-    //public function getGameList($personne)
-   // {
-        //TODO
-        // SELECT * FROM `parties`
-        // JOIN personne_partie_resolue ON parties.personne_partie_resolue_id = personne_partie_resolue.id
-        // WHERE personnes.id=?
-        // AND personne_partie_resolue.id=0
+    public function findGameList()
+   {
+       //On construit requête via QueryBuilder
+       $qb = $this->createQueryBuilder('a');
+       $qb->select('a.id');
+       $qb->addSelect('a.nom');
+       $qb->addSelect('a.photo');
 
-        //On construit requête via QueryBuilder
-        //$qb = $this->createQueryBuilder('a');
+       $query=$qb->getQuery();
 
-        // On injecte les paramètres $id et $personne dans la query
-        //$query->setParameter("id",'%'.$id.'%');
-        //$query->setParameter("id",'%'.$personne.'%');
+       $result=$query->getArrayResult();
 
-        // On récupère la réponse à la requête
-        // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
-        //$result=$query->getArrayResult();
-
-        //return $result;
-    //}
+       return $result;
+   }
 
     public function findBasic($id)
     {

@@ -46,7 +46,7 @@ class ApiCatController extends Controller
 
         return $this->json([
             "status" => "ok",
-            "message" => "",
+            "message" => "Petit(e) curieux(se)",
             "data" => $partie,
         ]);
     }
@@ -62,11 +62,11 @@ class ApiCatController extends Controller
         $personne = $request->query->get('personne');
 
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $partie = $partieRepo->findAll();
+        $partie = $partieRepo->findGameList();
 
         return $this->json([
             "status" => "ok",
-            "message" => "",
+            "message" => "Petit(e) curieux(se)",
             "data" => $partie,
         ]);
     }
