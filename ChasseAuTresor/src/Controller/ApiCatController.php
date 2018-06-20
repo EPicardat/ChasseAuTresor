@@ -14,6 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ApiCatController extends Controller
 {
+
+    // Fonction qui récupère la liste des parties disponibles
     /**
      * @Route("/gameList", name="gameList", methods={"GET"})
      * @param Request $request
@@ -113,6 +115,7 @@ class ApiCatController extends Controller
         $entityManager->flush();
     }
 
+    //Fonction qui permet de soumettre une position GPS
     /**
      * @Route("/submitLoc", name="submitLoc", methods={"GET"})
      * @param $request
@@ -232,7 +235,6 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
-
     /**
      * @param $latitudeSoumise
      * @param $latitudeSolution
@@ -274,8 +276,7 @@ class ApiCatController extends Controller
         return $d;
     }
 
-    // Fonction permettant de récuperer le message de fin de jeu; lorsque la position du trésor a été trouvée
-
+    // Fonction permettant de récuperer le message de fin de jeu lorsque la position du trésor a été trouvée
     /**
      * @param Request $request
      * @return string
@@ -305,7 +306,7 @@ class ApiCatController extends Controller
         $entityManager->flush();
     }
 
-
+// Fonction permettant de récupérer les indices
     /**
      * @param $id
      * @param $personne
@@ -325,10 +326,11 @@ class ApiCatController extends Controller
             // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
             $indices = $indicesRepo->getClues($id);
-            $listeIndices[0] = $indices[0]['indice'];
+
+            $listeIndices[0] = $indices[0];
             // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
             if ($nbProposition >= 6) {
-                $listeIndices[1] = $indices[1]['indice'];
+                $listeIndices[1] = $indices[1];
             }
         }
         return $listeIndices;
