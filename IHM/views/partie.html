@@ -3,14 +3,14 @@
     <h1>Parties</h1>
 
     <div ng-repeat="partie in listeParties">
-      <button ng-click="selectPartie(partie)" ng-model="partie"> Partie {{partie.id}}</button>
+      <button ng-click="selectPartie(partie)" ng-model="partie"> {{partie.nom}}</button>
     </div>
   </div>
 
   <div ng-if="partieSelect">
     <div>
       <p>
-        Partie n° {{partieSelect.id}} : {{partieSelect.name}}
+        Partie n° {{partieSelect.id}} : {{partieSelect.nom}}
       </p>
     </div>
 

@@ -17,12 +17,12 @@ class PropositionGPS
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=30)
+     * @ORM\Column(type="float", length=30)
      */
     private $latitude;
 
     /**
-     * @ORM\Column(type="string", length=30)
+     * @ORM\Column(type="float", length=30)
      */
     private $longitude;
 
@@ -31,24 +31,24 @@ class PropositionGPS
         return $this->id;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
 
-    public function setLatitude(string $latitude): self
+    public function setLatitude(float $latitude): self
     {
         $this->latitude = $latitude;
 
         return $this;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function setLongitude(string $longitude): self
+    public function setLongitude(float $longitude): self
     {
         $this->longitude = $longitude;
 

@@ -6,6 +6,7 @@ use App\Entity\Indices;
 use App\Entity\Parties;
 use App\Entity\PersonneGpsPartie;
 use App\Entity\PersonnePartieResolue;
+use App\Entity\Personnes;
 use App\Entity\PropositionGPS;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -150,7 +151,7 @@ class ApiCatController extends Controller
     }
 
     /**
-     * @Route("/submitLoc", name="submitLoc", methods={"POST"})
+     * @Route("/submitLoc", name="submitLoc", methods={"GET"})
      * @param $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -210,11 +211,25 @@ class ApiCatController extends Controller
         // On récupère l'id de l'entity
         $GPS = $propositionGPS->getId();
 
-        // On instancie une nouvelle PersonneGPSPartie
+        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
+
+        $partie = $partiesRepo->find($id);
+
+
+
+        $personneRepo = $this->getDoctrine()->getRepository(Personnes::class);
+
+        $personneEnt = $personneRepo->find($personne);
+
+
+
         $personneGPSPartie = new PersonneGpsPartie();
-        $personneGPSPartie->setPartie($id);
-        $personneGPSPartie->setPersonne($personne);
-        $personneGPSPartie->setGps($GPS);
+
+        $personneGPSPartie->setPartie($partie);
+
+        $personneGPSPartie->setPersonne($personneEnt);
+
+        $personneGPSPartie->setGps($propositionGPS);
 
         // On sauve la nouvelle partie et la table de liaison
         $entityManager = $this->getDoctrine()->getManager();

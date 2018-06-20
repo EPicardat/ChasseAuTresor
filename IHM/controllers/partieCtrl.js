@@ -21,7 +21,7 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
           }
       })
           .success(function (status, message, data) {
-              $scope.Details = data;
+              $scope.listeParties = status.data;
           })
           .error(function (status, message, data) {
               $scope.listeParties = data;
@@ -33,8 +33,27 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
   $scope.SearchPartie();
 
+  $scope.loadIndice = function () {
+
+      $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/gameList', {
+          params:{
+              id : $scope.partieSelect.id,
+          }
+      })
+          .success(function (status, message, data) {
+              $scope.listeParties = status.data;
+          })
+          .error(function (status, message, data) {
+              $scope.listeParties = data;
+              $scope.ResponseDetails = "Status: " + status +
+                  "<hr />Message: " + message +
+                  "<hr />data: " + data;
+          });
+  };
+
   $scope.selectPartie = function(partie) {
     $scope.partieSelect = partie;
+    //$scope.loadIndice();
   };
 
 
@@ -86,29 +105,33 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
   $scope.soumettrePosition = function(pos){
 
-    alert(pos.latitude);
+
 
 
     $scope.SearchData();
-
+    alert($scope.reponse);
   };
 
   $scope.SearchData = function () {
 
-    $http.get('http://localhost/Chasseautresor/ChasseAuTresor/public/submitLoc', {
+    $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/submitLoc', {
       params:{
-        lat : $scope.locationCurrent.latitude,
-        long : $scope.locationCurrent.longitude
+          id : $scope.partieSelect.id,
+          personne : "1",
+          lat : $scope.locationCurrent.latitude,
+          lon : $scope.locationCurrent.longitude,
+          acc : $scope.locationCurrent.accuracy,
+
       }
     })
-      .success(function (data, status, headers, config) {
-        $scope.Details = data;
+      .success(function (status, message, data) {
+        $scope.reponse = data.found;
       })
-      .error(function (data, status, header, config) {
+      .error(function (status, message, data) {
         $scope.ResponseDetails = "Data: " + data +
           "<hr />status: " + status +
-          "<hr />headers: " + header +
-          "<hr />config: " + config;
+          "<hr />message: " + message +
+          "<hr />data: " + data;
       });
   };
 
