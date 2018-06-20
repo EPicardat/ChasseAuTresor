@@ -46,7 +46,7 @@ class PartiesRepository extends ServiceEntityRepository
         $query=$qb->getQuery();
 
         // On injecte le paramètre $id dans la query
-        $query->setParameter("id",'%'.$id.'%');
+        $query->setParameter("id",$id);
 
         // On récupère la réponse à la requête
         // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
@@ -63,12 +63,12 @@ class PartiesRepository extends ServiceEntityRepository
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
-        $qb->select('a.messageFin');
+        $qb->select('a.message_fin');
         $qb->where('a.id = :id');
         $query=$qb->getQuery();
 
         // On injecte le paramètre $id dans la query
-        $query->setParameter("id",'%'.$id.'%');
+        $query->setParameter("id",$id);
 
         // On récupère la réponse à la requête
         // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture

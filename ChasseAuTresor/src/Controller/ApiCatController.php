@@ -14,44 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ApiCatController extends Controller
 {
-    // Fonction qui récupère TOUTES les infos de la partie
-    /**
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getGame(Request $request)
-    {
-        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id = $request->query->get('id');
-        $partie = $partiesRepo->find($id);
-
-        return $this->json([
-            "status" => "ok",
-            "message" => "",
-            "data" => $partie,
-        ]);
-    }
-
-    // Fonction qui récupère les infos DE BASE de la partie
-
-    /**
-     * @Route("/game/{id}", name="game", methods={"GET"})
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function getGameInfo(Request $request)
-    {
-        $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-        $id = $request->query->get('id');
-        $partie = $partiesRepo->findBasic($id);
-
-        return $this->json([
-            "status" => "ok",
-            "message" => "Petit(e) curieux(se)",
-            "data" => $partie,
-        ]);
-    }
-
     /**
      * @Route("/gameList", name="gameList", methods={"GET"})
      * @param Request $request
@@ -163,15 +125,20 @@ class ApiCatController extends Controller
         $longitudeSoumise = $request->query->get('lon');
         $accuracySoumise = $request->query->get('acc');
 
+        $reponse ='Cherche encore';
+
         // On enregistre les coordonnées dans la la table propositionGPS
         $this->setLoc($id, $personne, $latitudeSoumise, $longitudeSoumise);
 
         // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
+
         $found = $this->compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
-        $nbProposition = null;
-        $indice1 = null;
-        $indice2 = null;
+        if ($found){
+            $reponse ='Trouvé !';
+        }
+
+        $listeIndices = null;
         $messageFin = null;
 
         if ($found) {
@@ -179,19 +146,15 @@ class ApiCatController extends Controller
             $this->setResolved($id, $personne);
         } else {
             $listeIndices = $this->getClues($id, $personne);
-            $nbProposition = $listeIndices[0];
-            $indice1 = $listeIndices[1];
-            $indice2 = $listeIndices[2];
         }
 
-        $answer = array($found, $nbProposition, $indice1, $indice2, $messageFin);
+        $answer = array($reponse, $listeIndices, $messageFin);
 
         return $this->json([
             "status" => "ok",
-            "message" => "",
+            "message" => "C'est vilain de fouiller dans le Json !",
             "data" => $answer,
         ]);
-
     }
 
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
@@ -212,16 +175,10 @@ class ApiCatController extends Controller
         $GPS = $propositionGPS->getId();
 
         $partiesRepo = $this->getDoctrine()->getRepository(Parties::class);
-
         $partie = $partiesRepo->find($id);
 
-
-
         $personneRepo = $this->getDoctrine()->getRepository(Personnes::class);
-
         $personneEnt = $personneRepo->find($personne);
-
-
 
         $personneGPSPartie = new PersonneGpsPartie();
 
@@ -331,18 +288,14 @@ class ApiCatController extends Controller
         return $messageFin;
     }
 
-    // Fonction permettant de récupérer la liste d'indices.
-    // Le tabeau $listeIndices contient : le nombre de propositions soumises, le premier indice, le second indice.
-
     /**
      * @param $id
      * @param $personne
      */
     private function setResolved($id, $personne)
     {
-        $criteria=[$id, $personne];
-        $personnePartieResolueRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $personnePartieResolue = $personnePartieResolueRepo->findOneBy($criteria);
+        $personnePartieResolueRepo = $this->getDoctrine()->getRepository(PersonnePartieResolue::class);
+        $personnePartieResolue = $personnePartieResolueRepo->findPPR($id, $personne);
 
         $personnePartieResolue->setResolue(true);
 
@@ -365,9 +318,11 @@ class ApiCatController extends Controller
 
         // On récupere le nombre de soumission(s) déjà effectuée(s)
         $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $nbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
+        $tabNbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
+        $nbProposition = $tabNbProposition[0][1];
 
-        $listeIndices[0] = $nbProposition;
+        //var_dump($tabNbProposition);
+        //var_dump($nbProposition);
 
         //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
         if ($nbProposition >= 3) {
@@ -375,10 +330,11 @@ class ApiCatController extends Controller
             // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
             $indices = $indicesRepo->getClues($id);
-            $listeIndices[1] = $indices[0]->getIndice;
+            //var_dump($indices);
+            $listeIndices[0] = $indices[0]['indice'];
             // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
             if ($nbProposition >= 6) {
-                $listeIndices[2] = $indices[1]->getIndice;
+                $listeIndices[1] = $indices[1]['indice'];
             }
         }
         return $listeIndices;

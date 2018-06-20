@@ -24,11 +24,11 @@ class IndicesRepository extends ServiceEntityRepository
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.indice');
-        $qb->where('a.id = :id');
+        $qb->where('a.partie = :id');
         $query=$qb->getQuery();
 
         // On injecte le paramètre $id dans la query
-        $query->setParameter("id",'%'.$id.'%');
+        $query->setParameter("id",$id);
 
         // On récupère la réponse à la requête
         // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture

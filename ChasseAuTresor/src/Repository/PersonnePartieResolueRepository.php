@@ -19,32 +19,23 @@ class PersonnePartieResolueRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonnePartieResolue::class);
     }
 
-//    /**
-//     * @return PersonnePartieResolue[] Returns an array of PersonnePartieResolue objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function findPPR($id, $personne)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        //On construit la requête via QueryBuilder
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('a.Partie = :id');
+        $qb->where('a.Personne = :personne');
 
-    /*
-    public function findOneBySomeField($value): ?PersonnePartieResolue
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $query=$qb->getQuery();
+
+        // On injecte les paramètres dans la query
+        $query->setParameter("id",$id);
+        $query->setParameter("personne",$personne);
+
+        // On récupère la réponse à la requête
+
+        $result=$query->getResult();
+
+        return $result;
     }
-    */
 }

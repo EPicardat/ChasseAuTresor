@@ -26,18 +26,18 @@ class PersonneGpsPartieRepository extends ServiceEntityRepository
      * @param $who
      * @return int
      */
-    public function countProposition($id, $who)
+    public function countProposition($id, $personne)
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
         $qb->select($qb->expr()->count('a'));
-        $qb->where('a.id = :id');
-        $qb->andWhere('a.Personne = :who');
+        $qb->where('a.Partie = :id');
+        $qb->andWhere('a.Personne = :personne');
         $query=$qb->getQuery();
 
         // On injecte les paramètres $id et $who dans la query
-        $query->setParameter("id",'%'.$id.'%');
-        $query->setParameter("who",'%'.$who.'%');
+        $query->setParameter("id",$id);
+        $query->setParameter("personne",$personne);
 
         // On récupère la réponse à la requête
         $result=$query->getResult();
