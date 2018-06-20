@@ -76,8 +76,11 @@ class Indices implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
-        return['indice'=>$this->getIndice()];
+
+        return[
+            'id'=>$this->getId(),
+            'indice'=>$this->getIndice()
+        ];
 
     }
 

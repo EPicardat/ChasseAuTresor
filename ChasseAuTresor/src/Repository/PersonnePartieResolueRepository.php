@@ -24,7 +24,7 @@ class PersonnePartieResolueRepository extends ServiceEntityRepository
         //On construit la requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
         $qb->where('a.Partie = :id');
-        $qb->where('a.Personne = :personne');
+        $qb->andWhere('a.Personne = :personne');
 
         $query=$qb->getQuery();
 
@@ -33,8 +33,7 @@ class PersonnePartieResolueRepository extends ServiceEntityRepository
         $query->setParameter("personne",$personne);
 
         // On récupère la réponse à la requête
-
-        $result=$query->getResult();
+        $result=$query->getOneOrNullResult();
 
         return $result;
     }

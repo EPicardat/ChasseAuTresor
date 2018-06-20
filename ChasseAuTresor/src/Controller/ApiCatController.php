@@ -35,17 +35,14 @@ class ApiCatController extends Controller
     }
 
     // Fonction qui sauvegarde les paramètres d'une nouvelle partie
-
     /**
      * @Route("/setGame", name="setGame", methods={"POST"})
      * @param Request $request
      */
     public function setPartie(Request $request)
     {
-        // On récupère les paramètres de la request. Certains vont être strockés dans Partie, d'autres dans Indices,
+        // On récupère les paramètres de la request. Certains vont être stockés dans Partie, d'autres dans Indices,
         // d'autres enfin dans la table de liaison
-
-        $id = $request->query->get('id');
 
         $accuracy = $request->query->get('acc');
         //$dateFin = $request->query->get('fin');
@@ -82,24 +79,28 @@ class ApiCatController extends Controller
         $partie->setPhoto($photo);
         $privee->setPhoto($privee);
 
+        // On sauve la nouvelle partie
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($partie);
+        $entityManager->flush();
+
         // On crée un nouvelle instance de PersonnePartieResolue
         $personnePartieResolue = new PersonnePartieResolue();
         $personnePartieResolue->setRole("Createur");
         $personnePartieResolue->setResolue(false);
-        $personnePartieResolue->addPartieId($id);
+        $personnePartieResolue->addPartieId($partie->getId());
         $personnePartieResolue->addPersonneId($personne);
 
-        // On sauve la nouvelle partie et la table de liaison
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($partie);
+        // On sauve la table de liaison
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
 
         // On crée un nouvelle instance d'indice et on la sauve.
         $indice = new Indices;
+
         // V2 :Temporaire : on set le type d'indice à 1.
         $indice->setTypeIndice(1);
-        $indice->setPartie($id);
+        $indice->setPartie($partie->getId());
 
         // V2 : Faire une scrogneugneu de boucle sur une liste d'indice
 
@@ -135,7 +136,7 @@ class ApiCatController extends Controller
         $found = $this->compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
         if ($found){
-            $reponse ='Trouvé !';
+            $reponse ='Bravo, c\'est trouvé !';
         }
 
         $listeIndices = null;
@@ -158,7 +159,6 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
-
     /**
      * @param $id
      * @param $personne
@@ -183,9 +183,7 @@ class ApiCatController extends Controller
         $personneGPSPartie = new PersonneGpsPartie();
 
         $personneGPSPartie->setPartie($partie);
-
         $personneGPSPartie->setPersonne($personneEnt);
-
         $personneGPSPartie->setGps($propositionGPS);
 
         // On sauve la nouvelle partie et la table de liaison
@@ -196,7 +194,6 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
-
     /**
      * @param $id
      * @param $latitudeSoumise
@@ -219,6 +216,7 @@ class ApiCatController extends Controller
 
         // On compare les deux accuracies. On travaille avec la plus grande des deux.
         $accuracyUtile = $accuracySoumise;
+
         if ($accuracySolution > $accuracySoumise) {
             $accuracyUtile = $accuracySolution;
         }
@@ -230,7 +228,6 @@ class ApiCatController extends Controller
         if ($d <= $accuracyUtile) {
             $found = true;
         }
-
         return $found;
     }
 
@@ -254,14 +251,17 @@ class ApiCatController extends Controller
         // Elle est définie à 3 par défaut permettant d'obtenir une précision au mètre. Il suffit de la multiplier par 1000.
 
         // On convertit les latitudes et longitudes en radian.
+
         $latitudeSoumise = deg2rad($latitudeSoumise);
         $longitudeSoumise = deg2rad($longitudeSoumise);
         $latitudeSolution = deg2rad($latitudeSolution);
         $longitudeSolution = deg2rad($longitudeSolution);
 
         // On calcule des distances entre les deux points.
-        $dlat = $longitudeSoumise - $latitudeSoumise;
-        $dlong = $longitudeSolution - $latitudeSolution;
+        $dlat = $latitudeSoumise - $latitudeSolution;
+        $dlong = $longitudeSoumise - $longitudeSolution;
+
+
 
         // On applique la formule.
         $a = sin($dlat / 2) * sin($dlat / 2) + cos($latitudeSoumise) * cos($longitudeSoumise) * sin($dlong / 2) * sin($dlong / 2);
@@ -288,6 +288,7 @@ class ApiCatController extends Controller
         return $messageFin;
     }
 
+    // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PersonnePartieResolue.
     /**
      * @param $id
      * @param $personne
@@ -304,14 +305,12 @@ class ApiCatController extends Controller
         $entityManager->flush();
     }
 
-    // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PartiePersonne.
 
     /**
      * @param $id
      * @param $personne
      * @return array
      */
-
     private function getClues($id, $personne)
     {
         $listeIndices = null;
@@ -321,16 +320,11 @@ class ApiCatController extends Controller
         $tabNbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
         $nbProposition = $tabNbProposition[0][1];
 
-        //var_dump($tabNbProposition);
-        //var_dump($nbProposition);
-
         //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
         if ($nbProposition >= 3) {
-
             // On récupère la liste d'indices
             $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
             $indices = $indicesRepo->getClues($id);
-            //var_dump($indices);
             $listeIndices[0] = $indices[0]['indice'];
             // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
             if ($nbProposition >= 6) {
