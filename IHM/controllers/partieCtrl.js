@@ -24,7 +24,6 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
               $scope.listeParties = status.data;
           })
           .error(function (status, message, data) {
-              $scope.listeParties = data;
               $scope.ResponseDetails = "Status: " + status +
                   "<hr />Message: " + message +
                   "<hr />data: " + data;
@@ -35,7 +34,7 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
   $scope.loadIndice = function () {
 
-      $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/gameList', {
+      $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/game', {
           params:{
               id : $scope.partieSelect.id,
           }
@@ -58,7 +57,7 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
 
   $scope.toggle = function(indice) {
-    $scope.indices[indice.id-1].show = !$scope.indices[indice.id-1].show;
+    this.$index.show = !this.$index.show;
   };
 
 
@@ -109,7 +108,7 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
 
     $scope.SearchData();
-    alert($scope.reponse);
+
   };
 
   $scope.SearchData = function () {
@@ -125,7 +124,10 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
       }
     })
       .success(function (status, message, data) {
-        $scope.reponse = data.found;
+        $scope.partieSelect.message = status.data[0];
+        $scope.partieSelect.indices = status.data[1];
+        $scope.partieSelect.messageFin = status.data[2];
+        alert($scope.partieSelect.message);
       })
       .error(function (status, message, data) {
         $scope.ResponseDetails = "Data: " + data +
