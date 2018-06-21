@@ -32,34 +32,13 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
 
   $scope.SearchPartie();
 
-  $scope.loadIndice = function () {
-
-      $http.get('http://localhost/ProjetPHP/Chasseautresor/ChasseAuTresor/public/game', {
-          params:{
-              id : $scope.partieSelect.id,
-          }
-      })
-          .success(function (status, message, data) {
-              $scope.listeParties = status.data;
-          })
-          .error(function (status, message, data) {
-              $scope.listeParties = data;
-              $scope.ResponseDetails = "Status: " + status +
-                  "<hr />Message: " + message +
-                  "<hr />data: " + data;
-          });
-  };
-
   $scope.selectPartie = function(partie) {
     $scope.partieSelect = partie;
-    //$scope.loadIndice();
   };
-
 
   $scope.toggle = function(indice) {
-    this.$index.show = !this.$index.show;
+    $scope.partieSelect.indices[indice.id-1].show = !$scope.partieSelect.indices[indice.id-1].show;
   };
-
 
   var map;
   $scope.map = function initMap(pos) {
@@ -105,8 +84,6 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
   $scope.soumettrePosition = function(pos){
 
 
-
-
     $scope.SearchData();
 
   };
@@ -125,8 +102,15 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
     })
       .success(function (status, message, data) {
         $scope.partieSelect.message = status.data[0];
-        $scope.partieSelect.indices = status.data[1];
-        $scope.partieSelect.messageFin = status.data[2];
+        if (status.data[1]){
+            $scope.partieSelect.indices = status.data[1];
+            for( i = 0; i < $scope.partieSelect.indices.length; i++){
+                $scope.partieSelect.indices[i].id = i+1;
+            }
+        }
+        if(status.data[2]) {
+            $scope.partieSelect.messageFin = status.data[2][0].message_fin;
+        }
         alert($scope.partieSelect.message);
       })
       .error(function (status, message, data) {

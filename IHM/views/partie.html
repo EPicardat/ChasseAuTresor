@@ -16,8 +16,8 @@
 
     <div><img ng-src="{{partieSelect.photo}}" alt="carte" id="image-connexion"></div>
     <div ng-repeat="indice in partieSelect.indices">
-      <button ng-click="toggle(indice)"> Indice {{ indice.count() }}</button>
-      <div class="divIndice" ng-show="show">{{indice}}</div>
+      <button ng-click="toggle(indice)"> Indice {{ indice.id }}</button>
+      <div class="divIndice" ng-hide="!indice.show">{{indice.indice}}</div>
     </div>
 
     <div>
