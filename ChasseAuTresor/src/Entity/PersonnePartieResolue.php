@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,12 +17,12 @@ class PersonnePartieResolue
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Personnes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Personnes", inversedBy="personnePartieResolues")
      */
     private $Personne;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Parties")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Parties", inversedBy="personnePartieResolues")
      */
     private $Partie;
 
@@ -34,79 +32,35 @@ class PersonnePartieResolue
     private $Resolue;
 
     /**
-     * @ORM\Column(type="string", length=10)
+     * @ORM\Column(type="string", length=255)
      */
     private $Role;
-
-    public function __construct()
-    {
-        $this->Personne = new ArrayCollection();
-        $this->Partie = new ArrayCollection();
-    }
 
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection|Personnes[]
-     */
-    public function getPersonne(): Collection
+    public function getPersonne(): ?Personnes
     {
         return $this->Personne;
     }
 
-    public function addPersonneId(Personnes $personneId): self
+    public function setPersonne(?Personnes $Personne): self
     {
-        if (!$this->Personne->contains($personneId)) {
-            $this->Personne[] = $personneId;
-            $personneId->setPersonnePartieResolue($this);
-        }
+        $this->Personne = $Personne;
 
         return $this;
     }
 
-    public function removePersonneId(Personnes $personneId): self
-    {
-        if ($this->Personne->contains($personneId)) {
-            $this->Personne->removeElement($personneId);
-            // set the owning side to null (unless already changed)
-            if ($personneId->getPersonnePartieResolue() === $this) {
-                $personneId->setPersonnePartieResolue(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Parties[]
-     */
-    public function getPartie(): Collection
+    public function getPartie(): ?Parties
     {
         return $this->Partie;
     }
 
-    public function addPartieId(Parties $partieId): self
+    public function setPartie(?Parties $Partie): self
     {
-        if (!$this->Partie->contains($partieId)) {
-            $this->Partie[] = $partieId;
-            $partieId->setPersonnePartieResolue($this);
-        }
-
-        return $this;
-    }
-
-    public function removePartieId(Parties $partieId): self
-    {
-        if ($this->Partie->contains($partieId)) {
-            $this->Partie->removeElement($partieId);
-            // set the owning side to null (unless already changed)
-            if ($partieId->getPersonnePartieResolue() === $this) {
-                $partieId->setPersonnePartieResolue(null);
-            }
-        }
+        $this->Partie = $Partie;
 
         return $this;
     }

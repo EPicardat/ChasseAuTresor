@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Form;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use App\Entity\Parties;
 use Symfony\Component\Form\AbstractType;
@@ -13,9 +14,9 @@ class GameCreatorType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('date_debut')
-            ->add('date_fin')
-            ->add('privee')
+            ->add('date_debut',  TextType::class , array('required' => false))
+            ->add('date_fin',TextType::class, array('required' => false))
+            ->add('privee', TextType::class, array('required' => false))
             ->add('photo')
             ->add('latitude')
             ->add('longitude')

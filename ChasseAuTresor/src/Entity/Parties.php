@@ -74,16 +74,23 @@ class Parties
      */
     private $personneGpsParties;
 
+
     /**
      * @ORM\Column(type="integer")
      */
     private $accuracy;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonnePartieResolue", mappedBy="Partie")
+     */
+    private $personnePartieResolues;
 
     public function __construct()
     {
         $this->personneReviewParties = new ArrayCollection();
         $this->indices = new ArrayCollection();
         $this->personneGpsParties = new ArrayCollection();
+        $this->personnePartieResolues = new ArrayCollection();
     }
 
     public function getId()
@@ -150,6 +157,19 @@ class Parties
 
         return $this;
     }
+
+    public function getAccuracy()
+    {
+        return $this->accuracy;
+    }
+
+    public function setAccuracy($accuracy): self
+    {
+        $this->accuracy = $accuracy;
+
+        return $this;
+    }
+
 
     public function getLatitude(): ?string
     {
@@ -257,7 +277,7 @@ class Parties
         return $this->personneGpsParties;
     }
 
-    public function addPersonneGpsParty(PersonneGpsPartie $personneGpsParty): self
+    public function addPersonneGpsParties(PersonneGpsPartie $personneGpsParty): self
     {
         if (!$this->personneGpsParties->contains($personneGpsParty)) {
             $this->personneGpsParties[] = $personneGpsParty;
@@ -280,14 +300,43 @@ class Parties
         return $this;
     }
 
-    public function getAccuracy()
+    public function addPersonneGpsParty(PersonneGpsPartie $personneGpsParty): self
     {
-        return $this->accuracy;
+        if (!$this->personneGpsParties->contains($personneGpsParty)) {
+            $this->personneGpsParties[] = $personneGpsParty;
+            $personneGpsParty->setPartie($this);
+        }
+
+        return $this;
     }
 
-    public function setAccuracy($accuracy): self
+    /**
+     * @return Collection|PersonnePartieResolue[]
+     */
+    public function getPersonnePartieResolues(): Collection
     {
-        $this->accuracy = $accuracy;
+        return $this->personnePartieResolues;
+    }
+
+    public function addPersonnePartieResolue(PersonnePartieResolue $personnePartieResolue): self
+    {
+        if (!$this->personnePartieResolues->contains($personnePartieResolue)) {
+            $this->personnePartieResolues[] = $personnePartieResolue;
+            $personnePartieResolue->setPartie($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonnePartieResolue(PersonnePartieResolue $personnePartieResolue): self
+    {
+        if ($this->personnePartieResolues->contains($personnePartieResolue)) {
+            $this->personnePartieResolues->removeElement($personnePartieResolue);
+            // set the owning side to null (unless already changed)
+            if ($personnePartieResolue->getPartie() === $this) {
+                $personnePartieResolue->setPartie(null);
+            }
+        }
 
         return $this;
     }

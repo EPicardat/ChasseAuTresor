@@ -13,6 +13,9 @@ class RegistrationController extends Controller
 {
     /**
      * @Route("/register", name="user_registration")
+     * @param $request
+     * @param $passwordEncoder
+     * @return
      */
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -37,7 +40,7 @@ class RegistrationController extends Controller
             // Add a flash message to confirm the registration.
             $this->addFlash("success", "Your account has been created.");
 
-            return $this->redirectToRoute('login');
+            return $this->redirect('http://localhost/chasseautresor/IHM/#/connexion');
         }
 
         return $this->render(

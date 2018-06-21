@@ -1,0 +1,48 @@
+<div class="jumbotron text-center">
+    <h1>Créer une nouvelle partie !</h1>
+    <form class="connexion-form" method="post">
+        <div>
+            <input type="text" ng-model="nom" placeholder="nom">
+        </div>
+        <div id="inputPhotoDiv">
+            <input type="text" id="inputPhoto" ng-model="photo" hidden="hidden">
+        </div>
+
+        <div class="camera">
+            <video id="video">Video stream not available.</video>
+            <br>
+            <button id="startbutton">Take photo</button>
+        </div>
+
+        <canvas id="canvas" style="display : none">
+        </canvas>
+
+        <div class="output">
+            <img id="photo" alt="The screen capture will appear in this box.">
+        </div>
+
+
+        <div ng-if="recherche">
+            <div ng-if="attente" class="loader"></div>
+            <div ng-if="locationFind" >
+                <p>Votre position :</p>
+                <label for="latitude">Latitude :</label>
+                <input class="valueCreation" id="latitude" type="text" ng-model="latitude" value="{{locationCurrent.latitude}}" readonly="readonly" placeholder="{{locationCurrent.latitude}}">
+                <label for="longitude">Longitude :</label>
+                <input class="valueCreation" id="longitude" type="text" ng-model="longitude" value="{{locationCurrent.longitude}}" readonly="readonly" placeholder="{{locationCurrent.longitude}}">
+                <label for="acc">Précision (en mètre) :</label>
+                <input class="valueCreation" id="acc" type="text" ng-model="accuracy" value="{{locationCurrent.accuracy}}" readonly="readonly" placeholder="{{locationCurrent.accuracy}}">
+            </div>
+        </div>
+        <div>
+            <button ng-click="findPosition()">Récupérer ma position</button>
+        </div>
+
+        <div>
+            <input type="text" ng-model="message_fin" placeholder="Message envoyé à la réussite">
+        </div>
+
+        <button id="balleAuCentre" ng-click="createGame();">Save</button>
+    </form>
+    <div>{{ message }}</div>
+</div>

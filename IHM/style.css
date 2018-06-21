@@ -182,3 +182,18 @@ ul li a:focus::before{
 
 
 
+/* Creation partie*/
+
+      .valueCreation{
+          display: block;
+          margin: 0 auto;
+      }
+
+      #balleAuCentre {
+          margin: 0 auto;
+      }
+
+      #inputPhotoDiv {
+          display: none;
+      }
+

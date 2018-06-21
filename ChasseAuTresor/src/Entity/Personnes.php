@@ -64,10 +64,17 @@ class Personnes implements UserInterface, \Serializable
      */
     private $personneGpsParties;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\PersonnePartieResolue", mappedBy="Personne")
+     */
+    private $personnePartieResolues;
+
+
     public function __construct()
     {
         $this->personneReviewParties = new ArrayCollection();
         $this->personneGpsParties = new ArrayCollection();
+        $this->personnePartieResolues = new ArrayCollection();
     }
 
     public function getId()
@@ -266,4 +273,34 @@ class Personnes implements UserInterface, \Serializable
         // TODO: Implement eraseCredentials() method.
     }
 
+    /**
+     * @return Collection|PersonnePartieResolue[]
+     */
+    public function getPersonnePartieResolues(): Collection
+    {
+        return $this->personnePartieResolues;
+    }
+
+    public function addPersonnePartieResolue(PersonnePartieResolue $personnePartieResolue): self
+    {
+        if (!$this->personnePartieResolues->contains($personnePartieResolue)) {
+            $this->personnePartieResolues[] = $personnePartieResolue;
+            $personnePartieResolue->setPersonne($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonnePartieResolue(PersonnePartieResolue $personnePartieResolue): self
+    {
+        if ($this->personnePartieResolues->contains($personnePartieResolue)) {
+            $this->personnePartieResolues->removeElement($personnePartieResolue);
+            // set the owning side to null (unless already changed)
+            if ($personnePartieResolue->getPersonne() === $this) {
+                $personnePartieResolue->setPersonne(null);
+            }
+        }
+
+        return $this;
+    }
 }
