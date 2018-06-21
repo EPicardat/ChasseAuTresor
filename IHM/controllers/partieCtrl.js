@@ -1,4 +1,4 @@
-scotchApp.controller('partieCtrl', function($scope, $http) {
+scotchApp.controller('partieCtrl', function($scope, $http, $location) {
 
 
   //Initialisation des variables
@@ -29,6 +29,12 @@ scotchApp.controller('partieCtrl', function($scope, $http) {
                   "<hr />data: " + data;
           });
   };
+
+  $scope.createPartie = function(path){
+
+          $location.path( path );
+
+  }
 
   $scope.SearchPartie();
 

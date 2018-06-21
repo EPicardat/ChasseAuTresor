@@ -1,7 +1,7 @@
 <div class="jumbotron text-center">
   <div ng-if="!partieSelect">
     <h1>Parties</h1>
-
+    <button ng-click="createPartie('/create')" > Créer une partie</button>
     <div ng-repeat="partie in listeParties">
       <button ng-click="selectPartie(partie)" ng-model="partie"> {{partie.nom}}</button>
     </div>
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-      <button ng-disabled="!locationFind" ng-click="soumettrePosition(locationCurrent)">Soumettre</button>
+      <button ng-if="locationFind" ng-click="soumettrePosition(locationCurrent)">Soumettre</button>
     </div>
 
   </div>
