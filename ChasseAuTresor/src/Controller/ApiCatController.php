@@ -8,8 +8,10 @@ use App\Entity\PersonneGpsPartie;
 use App\Entity\PersonnePartieResolue;
 use App\Entity\Personnes;
 use App\Entity\PropositionGPS;
+use App\Entity\TypeIndice;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiCatController extends Controller
@@ -38,49 +40,52 @@ class ApiCatController extends Controller
     /**
      * @Route("/setGame", name="setGame", methods={"POST"})
      * @param Request $request
+     * @return Response $response
+     *
      */
     public function setPartie(Request $request)
     {
-        // On récupère les paramètres de la request. Certains vont être stockés dans Partie, d'autres dans Indices,
+        // On récupère les paramètres de la request. Certains vont être strockés dans Partie, d'autres dans Indices,
         // d'autres enfin dans la table de liaison
 
+        $id = $request->query->get('id');
+
         $accuracy = $request->query->get('acc');
-        //$dateFin = $request->query->get('fin');
         $latitude = $request->query->get('lat');
         $longitude = $request->query->get('lon');
         $messageFin = $request->query->get('messageFin');
         $nom = $request->query->get('nom');
         $photo = $request->query->get('img');
-        $privee = $request->query->get('pri');
+        $privee = false;
+        $indice1 = "Pas d'indice disponible pour cette chasse ! Courage !";
+        $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
 
-        if (null != $request->query->get('ind1')) {
+        /*if (null != $request->query->get('ind1')) {
             $indice1 = $request->query->get('ind1');
         } else {
-            $indice1 = "Pas d\'indice disponible pour cette chasse ! Courage !";
+            $indice1 = "Pas d'indice disponible pour cette chasse ! Courage !";
         }
 
         if (null != $request->query->get('ind2')) {
             $indice2 = $request->query->get('ind2');
         } else {
             $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
-        }
+        }*/
 
         $personne = $request->query->get('personne');
 
         // On crée un nouvelle instance de Partie
         $partie = new Parties();
-        $partie->setAccuracy($accuracy);
+        $partie->setAccuracy((int) $accuracy);
         $partie->setDateDebut(new \DateTime());
-        //$partie->setDateFin($dateFin);
         $partie->setLatitude($latitude);
         $partie->setLongitude($longitude);
         $partie->setMessageFin($messageFin);
         $partie->setNom($nom);
         $partie->setPhoto($photo);
-        $privee->setPhoto($privee);
+        $partie->setPrivee($privee);
 
-        // On sauve la nouvelle partie
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this -> getDoctrine() -> getManager();
         $entityManager->persist($partie);
         $entityManager->flush();
 
@@ -88,21 +93,24 @@ class ApiCatController extends Controller
         $personnePartieResolue = new PersonnePartieResolue();
         $personnePartieResolue->setRole("Createur");
         $personnePartieResolue->setResolue(false);
-        $personnePartieResolue->addPartieId($partie->getId());
-        $personnePartieResolue->addPersonneId($personne);
+        $personnePartieResolue->setPartie($partie);
+        $personnePartieResolue->setPersonne($personne);
 
-        // On sauve la table de liaison
+        // On sauve la nouvelle partie et la table de liaison
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($partie);
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
 
         // On crée un nouvelle instance d'indice et on la sauve.
+        //Pour celà, on récupére le type d'indice dont l'id est égale à 1 (bouchonnage)
+        $typeIndRepo = $this->getDoctrine()->getRepository(TypeIndice::class);
+        $typeInd = $typeIndRepo->findOneBy(['id' => 1]);
+
         $indice = new Indices;
+        $indice->setTypeIndice($typeInd);
+        $indice->setPartie($id);
 
-        // V2 :Temporaire : on set le type d'indice à 1.
-        $indice->setTypeIndice(1);
-        $indice->setPartie($partie->getId());
-
-        // V2 : Faire une scrogneugneu de boucle sur une liste d'indice
 
         $indice->setIndice($indice1);
         $entityManager->persist($indice);
@@ -111,10 +119,9 @@ class ApiCatController extends Controller
         $indice->setIndice($indice2);
         $entityManager->persist($indice);
         $entityManager->flush();
+
+        return new Response('ok');
     }
-
-    //Fonction qui permet de soumettre une position GPS
-
     /**
      * @Route("/submitLoc", name="submitLoc", methods={"GET"})
      * @param $request

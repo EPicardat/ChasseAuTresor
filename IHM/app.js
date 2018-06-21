@@ -20,15 +20,20 @@ scotchApp.config(function($routeProvider) {
 
     // route for the connexion page
     .when('/connexion', {
-      templateUrl : 'http://localhost/projetPHP/Chasseautresor/ChasseAuTresor/public/login',
+      templateUrl : 'http://localhost/Chasseautresor/ChasseAuTresor/public/login',
       controller  : 'connexionCtrl'
     })
 
     // route for the inscription page
     .when('/inscription', {
-      templateUrl : 'http://localhost/projetPHP/Chasseautresor/ChasseAuTresor/public/register',
+      templateUrl : 'http://localhost/Chasseautresor/ChasseAuTresor/public/register',
       controller  : 'inscriptionCtrl'
-    });
+    })
+      .when('/create', {
+          templateUrl: 'views/gameCreation.html',
+          controller : 'gameCreationCtrl'
+      })
+  ;
 });
 
 

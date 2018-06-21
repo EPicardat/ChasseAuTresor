@@ -183,11 +183,24 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
 
                 let data = canvas.toDataURL('image/png');
                 photo.setAttribute('src', data);
-                inputSrc.setAttribute('value', data);
+                let token = makeid();
+                localStorage.setItem(token, data);
+                inputSrc.setAttribute('value', token)
+                $scope.photo = token;
 
             } else {
                 clearphoto();
             }
+        }
+
+        function makeid() {
+            let text = "";
+            let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for (let i = 0; i < 15; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
         }
 
         // Set up our event listener to run the startup process
