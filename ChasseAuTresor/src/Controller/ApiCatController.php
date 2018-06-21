@@ -21,11 +21,8 @@ class ApiCatController extends Controller
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getGameList(Request $request)
+    public function getGameList()
     {
-        $id = $request->query->get('id');
-        $personne = $request->query->get('personne');
-
         $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
         $partie = $partieRepo->findGameList();
 
@@ -37,6 +34,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction qui sauvegarde les paramètres d'une nouvelle partie
+
     /**
      * @Route("/setGame", name="setGame", methods={"POST"})
      * @param Request $request
@@ -116,6 +114,7 @@ class ApiCatController extends Controller
     }
 
     //Fonction qui permet de soumettre une position GPS
+
     /**
      * @Route("/submitLoc", name="submitLoc", methods={"GET"})
      * @param $request
@@ -129,7 +128,7 @@ class ApiCatController extends Controller
         $longitudeSoumise = $request->query->get('lon');
         $accuracySoumise = $request->query->get('acc');
 
-        $reponse ='Cherche encore';
+        $reponse = 'Cherche encore';
 
         // On enregistre les coordonnées dans la la table propositionGPS
         $this->setLoc($id, $personne, $latitudeSoumise, $longitudeSoumise);
@@ -138,8 +137,8 @@ class ApiCatController extends Controller
 
         $found = $this->compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
-        if ($found){
-            $reponse ='Bravo, c\'est trouvé !';
+        if ($found) {
+            $reponse = 'Bravo, c\'est trouvé !';
         }
 
         $listeIndices = null;
@@ -162,6 +161,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
+
     /**
      * @param $id
      * @param $personne
@@ -197,6 +197,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
+
     /**
      * @param $id
      * @param $latitudeSoumise
@@ -235,6 +236,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
+
     /**
      * @param $latitudeSoumise
      * @param $latitudeSolution
@@ -264,7 +266,6 @@ class ApiCatController extends Controller
         $dlong = $longitudeSoumise - $longitudeSolution;
 
 
-
         // On applique la formule.
         $a = sin($dlat / 2) * sin($dlat / 2) + cos($latitudeSoumise) * cos($longitudeSoumise) * sin($dlong / 2) * sin($dlong / 2);
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
@@ -277,6 +278,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de récuperer le message de fin de jeu lorsque la position du trésor a été trouvée
+
     /**
      * @param Request $request
      * @return string
@@ -290,6 +292,7 @@ class ApiCatController extends Controller
     }
 
     // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PersonnePartieResolue.
+
     /**
      * @param $id
      * @param $personne
@@ -307,6 +310,7 @@ class ApiCatController extends Controller
     }
 
 // Fonction permettant de récupérer les indices
+
     /**
      * @param $id
      * @param $personne
@@ -335,5 +339,4 @@ class ApiCatController extends Controller
         }
         return $listeIndices;
     }
-
 }

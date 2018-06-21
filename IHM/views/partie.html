@@ -9,9 +9,9 @@
 
   <div ng-if="partieSelect">
     <div>
-      <p>
+      <h2>
         Partie n° {{partieSelect.id}} : {{partieSelect.nom}}
-      </p>
+      </h2>
     </div>
 
     <div><img ng-src="{{partieSelect.photo}}" alt="carte" id="image-connexion"></div>
@@ -21,16 +21,16 @@
     </div>
 
     <div>
-      <button ng-click="findPosition()">Récupère ma position</button>
+      <button ng-click="findPosition()">Récupère ma position !</button>
     </div>
 
     <div ng-if="recherche">
       <div ng-if="attente" class="loader"></div>
       <div ng-if="locationFind">
-        Votre position :
-        Latitude : {{locationCurrent.latitude}}
-        Longitude : {{locationCurrent.longitude}}
-        Précision : {{locationCurrent.accuracy}} meters.
+        <p><strong>Vous êtes plus ou moins ici :</strong></p>
+        <p>Latitude : {{locationCurrent.latitude}}.</p>
+        <p>Longitude : {{locationCurrent.longitude}}.</p>
+        <p>Précision : {{locationCurrent.accuracy}} mètres.</p>
         <div id="map"></div>
 
       </div>
