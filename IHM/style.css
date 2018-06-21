@@ -2,8 +2,9 @@ body {
     background-image: url(img/worldmap.jpg);
     background-position: 50%;
     background-attachment: fixed;
-    color: #FFF;
+    color: #565656;
     text-align: center;
+    min-height: fit-content;
 }
 
 .ng-animate-block-transitions {
@@ -22,9 +23,12 @@ h1 {
     text-shadow: black 0.1em 0.1em 0.1em
 }
 
-h2{
+h2 {
     font-size: 15px;
-    color: black;
+}
+
+footer {
+    font-size: 12px;
 }
 
 /* Connexion */
@@ -47,38 +51,38 @@ input {
 
 button {
     width: 250px;
-    border:none;
-    padding:3px 0 3px 0;
-    border-radius:5px;
-    box-shadow:1px 1px 3px #aaa;
-    background:#fff;
-    color:#565656;
+    border: none;
+    padding: 3px 0 3px 0;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px #aaa;
+    background: #fff;
+    color: #565656;
 }
 
 button:hover,
-button a:focus{
-    background:#565656;
-    color:#fff;
-    text-shadow: 1px 1px 4px #FFFFFF;
+button a:focus {
+    background: #565656;
+    color: #fff;
 }
 
 div {
     margin: 20px auto;
     width: 100%;
-
 }
 
 .divIndice {
     padding: 10px;
-
+    color: white;
     background-color: #333;
     min-height: 100px;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
     position: relative;
     top: 0;
     left: 0;
-    text-align: justify;
+    text-align: center;
+    line-height: 100px;
+    border-radius: 5px;
 }
 
 .loader {
@@ -118,16 +122,16 @@ div {
 /* Menu */
 ul {
     display: table;
-    width:100%;
+    width: 100%;
     max-width: 500px;
     margin: 50px auto;
     padding: 0;
     background: #717171;
     background: -webkit-linear-gradient(#565656, #717171);
-    background:    -moz-linear-gradient(#565656, #717171);
-    background:     -ms-linear-gradient(#565656, #717171);
-    background:      -o-linear-gradient(#565656, #717171);
-    background:         linear-gradient(#565656, #717171);
+    background: -moz-linear-gradient(#565656, #717171);
+    background: -ms-linear-gradient(#565656, #717171);
+    background: -o-linear-gradient(#565656, #717171);
+    background: linear-gradient(#565656, #717171);
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .3),
     0 3px 5px rgba(0, 0, 0, .2),
@@ -137,8 +141,8 @@ ul {
 
 ul li {
     display: table-cell;
-
 }
+
 ul li a {
     display: block;
     color: white;
@@ -147,53 +151,15 @@ ul li a {
     padding: 6px 6px;
     text-decoration: none;
     text-shadow: black 0.1em 0.1em 0.1em;
-
 }
 
 ul li a:hover,
-ul li a:focus{
+ul li a:focus {
     background: #616161;
     background: -webkit-linear-gradient(#616161, #828282);
-    background:    -moz-linear-gradient(#616161, #828282);
-    background:     -ms-linear-gradient(#616161, #828282);
-    background:      -o-linear-gradient(#616161, #828282);
-    background:         linear-gradient(#616161, #828282);
+    background: -moz-linear-gradient(#616161, #828282);
+    background: -ms-linear-gradient(#616161, #828282);
+    background: -o-linear-gradient(#616161, #828282);
+    background: linear-gradient(#616161, #828282);
     position: relative;
 }
-
-ul li a::before{
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 9px;
-    margin-left: -2px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-}
-
-ul li a:hover::before,
-ul li a:focus::before{
-    background: white;
-    box-shadow: 0 0 2px white,
-    0 -1px 0 rgba(0, 0, 0, .4);
-}
-
-
-
-
-/* Creation partie*/
-
-      .valueCreation{
-          display: block;
-          margin: 0 auto;
-      }
-
-      #balleAuCentre {
-          margin: 0 auto;
-      }
-
-      #inputPhotoDiv {
-          display: none;
-      }
-

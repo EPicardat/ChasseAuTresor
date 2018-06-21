@@ -8,10 +8,8 @@ use App\Entity\PersonneGpsPartie;
 use App\Entity\PersonnePartieResolue;
 use App\Entity\Personnes;
 use App\Entity\PropositionGPS;
-use App\Entity\TypeIndice;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiCatController extends Controller
@@ -40,52 +38,49 @@ class ApiCatController extends Controller
     /**
      * @Route("/setGame", name="setGame", methods={"POST"})
      * @param Request $request
-     * @return Response $response
-     *
      */
     public function setPartie(Request $request)
     {
-        // On récupère les paramètres de la request. Certains vont être strockés dans Partie, d'autres dans Indices,
+        // On récupère les paramètres de la request. Certains vont être stockés dans Partie, d'autres dans Indices,
         // d'autres enfin dans la table de liaison
 
-        $id = $request->query->get('id');
-
         $accuracy = $request->query->get('acc');
+        //$dateFin = $request->query->get('fin');
         $latitude = $request->query->get('lat');
         $longitude = $request->query->get('lon');
         $messageFin = $request->query->get('messageFin');
         $nom = $request->query->get('nom');
         $photo = $request->query->get('img');
-        $privee = false;
-        $indice1 = "Pas d'indice disponible pour cette chasse ! Courage !";
-        $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
+        $privee = $request->query->get('pri');
 
-        /*if (null != $request->query->get('ind1')) {
+        if (null != $request->query->get('ind1')) {
             $indice1 = $request->query->get('ind1');
         } else {
-            $indice1 = "Pas d'indice disponible pour cette chasse ! Courage !";
+            $indice1 = "Pas d\'indice disponible pour cette chasse ! Courage !";
         }
 
         if (null != $request->query->get('ind2')) {
             $indice2 = $request->query->get('ind2');
         } else {
             $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
-        }*/
+        }
 
         $personne = $request->query->get('personne');
 
         // On crée un nouvelle instance de Partie
         $partie = new Parties();
-        $partie->setAccuracy((int) $accuracy);
+        $partie->setAccuracy($accuracy);
         $partie->setDateDebut(new \DateTime());
+        //$partie->setDateFin($dateFin);
         $partie->setLatitude($latitude);
         $partie->setLongitude($longitude);
         $partie->setMessageFin($messageFin);
         $partie->setNom($nom);
         $partie->setPhoto($photo);
-        $partie->setPrivee($privee);
+        $privee->setPhoto($privee);
 
-        $entityManager = $this -> getDoctrine() -> getManager();
+        // On sauve la nouvelle partie
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($partie);
         $entityManager->flush();
 
@@ -93,24 +88,21 @@ class ApiCatController extends Controller
         $personnePartieResolue = new PersonnePartieResolue();
         $personnePartieResolue->setRole("Createur");
         $personnePartieResolue->setResolue(false);
-        $personnePartieResolue->setPartie($partie);
-        $personnePartieResolue->setPersonne($personne);
+        $personnePartieResolue->addPartieId($partie->getId());
+        $personnePartieResolue->addPersonneId($personne);
 
-        // On sauve la nouvelle partie et la table de liaison
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($partie);
+        // On sauve la table de liaison
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
 
         // On crée un nouvelle instance d'indice et on la sauve.
-        //Pour celà, on récupére le type d'indice dont l'id est égale à 1 (bouchonnage)
-        $typeIndRepo = $this->getDoctrine()->getRepository(TypeIndice::class);
-        $typeInd = $typeIndRepo->findOneBy(['id' => 1]);
-
         $indice = new Indices;
-        $indice->setTypeIndice($typeInd);
-        $indice->setPartie($id);
 
+        // V2 :Temporaire : on set le type d'indice à 1.
+        $indice->setTypeIndice(1);
+        $indice->setPartie($partie->getId());
+
+        // V2 : Faire une scrogneugneu de boucle sur une liste d'indice
 
         $indice->setIndice($indice1);
         $entityManager->persist($indice);
@@ -119,9 +111,63 @@ class ApiCatController extends Controller
         $indice->setIndice($indice2);
         $entityManager->persist($indice);
         $entityManager->flush();
-
-        return new Response('ok');
     }
+
+    //Fonction qui permet de recuperer les indices au chargement de la partie
+
+    /**
+     * @Route("/getFirstClues", name="getFirstClues", methods={"GET"})
+     * @param $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getFirstCluesLoc(Request $request)
+    {
+        $id = $request->query->get('id');
+        $personne = $request->query->get('personne');
+
+        $listeIndices = $this->getClues($id, $personne);
+
+        return $this->json([
+            "status" => "ok",
+            "message" => "Sale petit Hobbit jouflu !",
+            "data" => $listeIndices,
+        ]);
+    }
+
+
+    //Fonction qui permet de soumettre une position GPS
+
+    /**
+     * @param $id
+     * @param $personne
+     * @return array
+     */
+    private function getClues($id, $personne)
+    {
+        $listeIndices = null;
+
+        // On récupere le nombre de soumission(s) déjà effectuée(s)
+        $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
+        $tabNbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
+        $nbProposition = $tabNbProposition[0][1];
+
+        //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
+        if ($nbProposition >= 3) {
+            // On récupère la liste d'indices
+            $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
+            $indices = $indicesRepo->getClues($id);
+
+            $listeIndices[0] = $indices[0];
+            // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
+            if ($nbProposition >= 6) {
+                $listeIndices[1] = $indices[1];
+            }
+        }
+        return $listeIndices;
+    }
+
+    // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
+
     /**
      * @Route("/submitLoc", name="submitLoc", methods={"GET"})
      * @param $request
@@ -167,7 +213,7 @@ class ApiCatController extends Controller
         ]);
     }
 
-    // Fonction permettant de sauvegarder la proposition dans la table Proposition GPS.
+    // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
 
     /**
      * @param $id
@@ -203,7 +249,7 @@ class ApiCatController extends Controller
         $entityManager->flush();
     }
 
-    // Fonction permettant de comparer les coordonnées GPS soumises avec les coordonnées GPS solution
+    // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
 
     /**
      * @param $id
@@ -242,7 +288,7 @@ class ApiCatController extends Controller
         return $found;
     }
 
-    // Fonction permettant le calcul de la distance à vol d'oiseau entre les coordonnées soumises et les coordonnées solution
+    // Fonction permettant de récuperer le message de fin de jeu lorsque la position du trésor a été trouvée
 
     /**
      * @param $latitudeSoumise
@@ -284,7 +330,7 @@ class ApiCatController extends Controller
         return $d;
     }
 
-    // Fonction permettant de récuperer le message de fin de jeu lorsque la position du trésor a été trouvée
+    // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PersonnePartieResolue.
 
     /**
      * @param Request $request
@@ -298,7 +344,7 @@ class ApiCatController extends Controller
         return $messageFin;
     }
 
-    // Fonction permettant de passer l'attribut du booléen resolu à true dans la table de liaison PersonnePartieResolue.
+// Fonction permettant de récupérer les indices
 
     /**
      * @param $id
@@ -314,36 +360,5 @@ class ApiCatController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
-    }
-
-// Fonction permettant de récupérer les indices
-
-    /**
-     * @param $id
-     * @param $personne
-     * @return array
-     */
-    private function getClues($id, $personne)
-    {
-        $listeIndices = null;
-
-        // On récupere le nombre de soumission(s) déjà effectuée(s)
-        $PersonnneGPSPartiesRepo = $this->getDoctrine()->getRepository(PersonneGpsPartie::class);
-        $tabNbProposition = $PersonnneGPSPartiesRepo->countProposition($id, $personne);
-        $nbProposition = $tabNbProposition[0][1];
-
-        //  Si ce nombre est supérieur ou égal à 3, on recupère le premier indice, et on le set dans la liste.
-        if ($nbProposition >= 3) {
-            // On récupère la liste d'indices
-            $indicesRepo = $this->getDoctrine()->getRepository(Indices::class);
-            $indices = $indicesRepo->getClues($id);
-
-            $listeIndices[0] = $indices[0];
-            // Si ce nombre est supérieur à 6, on recupère aussi le second indice, et on le set dans la liste.
-            if ($nbProposition >= 6) {
-                $listeIndices[1] = $indices[1];
-            }
-        }
-        return $listeIndices;
     }
 }

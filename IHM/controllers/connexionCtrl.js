@@ -1,4 +1,4 @@
-scotchApp.controller('connexionCtrl', function($scope) {
+scotchApp.controller('connexionCtrl', function ($scope) {
 
 
 });
