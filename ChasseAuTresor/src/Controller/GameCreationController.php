@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Parties;
 use App\Form\GameCreatorType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class GameCreationController extends Controller
 {
@@ -22,9 +22,6 @@ class GameCreationController extends Controller
         // 2) handle the submit
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-           //
-
             // Add a flash message to confirm the registration.
             $this->addFlash("success", "Your game has been created.");
 

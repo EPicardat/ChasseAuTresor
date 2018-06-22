@@ -2,7 +2,7 @@
     <h1>Créer une nouvelle partie !</h1>
     <form class="connexion-form" method="post">
         <div>
-            <input type="text" ng-model="nom" placeholder="nom">
+            <input type="text" ng-model="nom" placeholder="Nom de la partie">
         </div>
         <div id="inputPhotoDiv">
             <input type="text" id="inputPhoto" ng-model="photo" hidden="hidden">
@@ -11,7 +11,7 @@
         <div class="camera">
             <video id="video">Video stream not available.</video>
             <br>
-            <button id="startbutton">Take photo</button>
+            <button id="startbutton">Prendre une photo</button>
         </div>
 
         <canvas id="canvas" style="display : none">
@@ -20,7 +20,6 @@
         <div class="output">
             <img id="photo" alt="The screen capture will appear in this box.">
         </div>
-
 
         <div ng-if="recherche">
             <div ng-if="attente" class="loader"></div>
@@ -35,14 +34,17 @@
             </div>
         </div>
         <div>
-            <button ng-click="findPosition()">Récupérer ma position</button>
+            <input type="text" ng-model="indice1" placeholder="Premier indice">
         </div>
 
+        <div>
+            <input type="text" ng-model="indice2" placeholder="Second indice">
+        </div>
         <div>
             <input type="text" ng-model="message_fin" placeholder="Message envoyé à la réussite">
         </div>
 
-        <button id="balleAuCentre" ng-click="createGame();">Save</button>
+        <button id="balleAuCentre" ng-click="createGame();">Créer</button>
     </form>
     <div>{{ message }}</div>
 </div>

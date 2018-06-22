@@ -33,23 +33,6 @@ class Indices implements \JsonSerializable
      */
     private $partie;
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getIndice(): ?string
-    {
-        return $this->indice;
-    }
-
-    public function setIndice(string $indice): self
-    {
-        $this->indice = $indice;
-
-        return $this;
-    }
-
     public function getTypeIndice(): ?TypeIndice
     {
         return $this->TypeIndice;
@@ -77,11 +60,28 @@ class Indices implements \JsonSerializable
     public function jsonSerialize()
     {
 
-        return[
-            'id'=>$this->getId(),
-            'indice'=>$this->getIndice()
+        return [
+            'id' => $this->getId(),
+            'indice' => $this->getIndice()
         ];
 
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getIndice(): ?string
+    {
+        return $this->indice;
+    }
+
+    public function setIndice(string $indice): self
+    {
+        $this->indice = $indice;
+
+        return $this;
     }
 
 }

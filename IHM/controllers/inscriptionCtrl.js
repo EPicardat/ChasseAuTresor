@@ -1,4 +1,4 @@
-scotchApp.controller('inscriptionCtrl', function($scope) {
+scotchApp.controller('inscriptionCtrl', function ($scope) {
 
 
 });

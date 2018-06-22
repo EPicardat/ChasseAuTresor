@@ -20,37 +20,18 @@ class PartiesRepository extends ServiceEntityRepository
     }
 
     public function findGameList()
-   {
-       //On construit requête via QueryBuilder
-       $qb = $this->createQueryBuilder('a');
-       $qb->select('a.id');
-       $qb->addSelect('a.nom');
-       $qb->addSelect('a.photo');
-
-       $query=$qb->getQuery();
-
-       $result=$query->getArrayResult();
-
-       return $result;
-   }
-
-    public function findBasic($id)
     {
         //On construit requête via QueryBuilder
         $qb = $this->createQueryBuilder('a');
-        $qb->select('a.nom');
-        $qb->addSelect('a.dateDebut');
-        $qb->addSelect('a.dateFin');
+        $qb->select('a.id');
+        $qb->addSelect('a.nom');
         $qb->addSelect('a.photo');
-        $qb->where('a.id = :id');
-        $query=$qb->getQuery();
 
-        // On injecte le paramètre $id dans la query
-        $query->setParameter("id",$id);
+        $query = $qb->getQuery();
 
         // On récupère la réponse à la requête
         // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
-        $result=$query->getArrayResult();
+        $result = $query->getArrayResult();
 
         return $result;
     }
@@ -65,14 +46,14 @@ class PartiesRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a');
         $qb->select('a.message_fin');
         $qb->where('a.id = :id');
-        $query=$qb->getQuery();
+        $query = $qb->getQuery();
 
         // On injecte le paramètre $id dans la query
-        $query->setParameter("id",$id);
+        $query->setParameter("id", $id);
 
         // On récupère la réponse à la requête
         // getArrayResult() est plus rapide que getResult dans le cas d'un simple lecture
-        $result=$query->getArrayResult();
+        $result = $query->getArrayResult();
 
         return $result;
     }

@@ -1,8 +1,7 @@
 body {
-    background-image: url(img/worldmap.jpg);
-    background-position: 50%;
-    background-attachment: fixed;
+    background: url(img/worldmap.jpg) no-repeat center center fixed;
     color: #565656;
+    background-size: cover;
     text-align: center;
     min-height: fit-content;
 }
@@ -18,7 +17,7 @@ img {
 }
 
 h1 {
-    font-size: 60px;
+    font-size: 10vw;
     color: white;
     text-shadow: black 0.1em 0.1em 0.1em
 }
@@ -162,4 +161,38 @@ ul li a:focus {
     background: -o-linear-gradient(#616161, #828282);
     background: linear-gradient(#616161, #828282);
     position: relative;
+}
+
+/*** Page inscription ***/
+
+#register div label {
+    display: block;
+}
+
+#register div input {
+    border-radius: 5px;
+}
+
+/*** Creation Partie***/
+
+#inputPhotoDiv {
+    display: none;
+}
+
+#balleAuCentre {
+    display: block;
+    margin: 0 auto;
+}
+
+.ng-scope label {
+    display: block;
+}
+
+.connexion-form input {
+    border-radius: 5px;
+}
+
+#lienInscription {
+    text-decoration: none;
+    padding-top: 5vw;
 }

@@ -13,17 +13,17 @@
         {% endfor %}
     {% endfor %}
     <div class="jumbotron text-center">
-    <h1>Connexion</h1>
-    <form action="{{ path('login') }}" method="post" class="connexion-form" >
+        <h1>Connexion</h1>
+        <form action="{{ path('login') }}" method="post" class="connexion-form" >
 
-        <input type="text" id="username" name="_username" value="" ng-model="speudo" placeholder="username"/>
+            <input type="text" id="username" name="_username" value="" ng-model="speudo" placeholder="username"/>
 
-        <input type="password" id="password" name="_password" ng-model="passw1" placeholder="Password"/>
+            <input type="password" id="password" name="_password" ng-model="passw1" placeholder="Password"/>
 
-        <button type="submit">login</button>
+            <button type="submit">login</button>
 
-        <a href="http://localhost/Chasseautresor/IHM/index.html#/inscription">Sign up !</a>
-    </form>
+            <a href="http://localhost/Chasseautresor/IHM/index.html#/inscription" id="lienInscription">Pas de compte ? Inscrivez-vous !</a>
+        </form>
 
 
     </div>

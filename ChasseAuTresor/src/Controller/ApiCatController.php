@@ -8,6 +8,7 @@ use App\Entity\PersonneGpsPartie;
 use App\Entity\PersonnePartieResolue;
 use App\Entity\Personnes;
 use App\Entity\PropositionGPS;
+use App\Entity\TypeIndice;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +16,24 @@ use Symfony\Component\Routing\Annotation\Route;
 class ApiCatController extends Controller
 {
 
+    /**
+     * @Route("/user", name="user", methods={"GET"})
+     */
+    public function getLoggedUser()
+    {
+        if ($this->getUser() != null) {
+            return $this->json([
+                'user' => $this->getUser()->getId()
+            ]);
+        } else {
+            return $this->json([
+                'user' => 'anonymousUser'
+            ]);
+        }
+    }
+
     // Fonction qui récupère la liste des parties disponibles
+
     /**
      * @Route("/gameList", name="gameList", methods={"GET"})
      * @param Request $request
@@ -38,6 +56,8 @@ class ApiCatController extends Controller
     /**
      * @Route("/setGame", name="setGame", methods={"POST"})
      * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
      */
     public function setPartie(Request $request)
     {
@@ -45,41 +65,36 @@ class ApiCatController extends Controller
         // d'autres enfin dans la table de liaison
 
         $accuracy = $request->query->get('acc');
-        //$dateFin = $request->query->get('fin');
         $latitude = $request->query->get('lat');
         $longitude = $request->query->get('lon');
         $messageFin = $request->query->get('messageFin');
         $nom = $request->query->get('nom');
         $photo = $request->query->get('img');
-        $privee = $request->query->get('pri');
+        $privee = false;
+        $indice1 = "Pas d'indice disponible pour cette chasse ! Courage !";
+        $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
 
-        if (null != $request->query->get('ind1')) {
-            $indice1 = $request->query->get('ind1');
-        } else {
-            $indice1 = "Pas d\'indice disponible pour cette chasse ! Courage !";
+        if (null != $request->query->get('indice1')) {
+            $indice1 = $request->query->get('indice1');
         }
 
-        if (null != $request->query->get('ind2')) {
-            $indice2 = $request->query->get('ind2');
-        } else {
-            $indice2 = "Il n'y a vraiment aucun indice pour cette chasse. Pas la peine d'insister.";
+        if (null != $request->query->get('indice2')) {
+            $indice2 = $request->query->get('indice2');
         }
 
         $personne = $request->query->get('personne');
 
         // On crée un nouvelle instance de Partie
         $partie = new Parties();
-        $partie->setAccuracy($accuracy);
+        $partie->setAccuracy((int)$accuracy);
         $partie->setDateDebut(new \DateTime());
-        //$partie->setDateFin($dateFin);
         $partie->setLatitude($latitude);
         $partie->setLongitude($longitude);
         $partie->setMessageFin($messageFin);
         $partie->setNom($nom);
         $partie->setPhoto($photo);
-        $privee->setPhoto($privee);
+        $partie->setPrivee($privee);
 
-        // On sauve la nouvelle partie
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($partie);
         $entityManager->flush();
@@ -88,29 +103,35 @@ class ApiCatController extends Controller
         $personnePartieResolue = new PersonnePartieResolue();
         $personnePartieResolue->setRole("Createur");
         $personnePartieResolue->setResolue(false);
-        $personnePartieResolue->addPartieId($partie->getId());
-        $personnePartieResolue->addPersonneId($personne);
+        $personnePartieResolue->setPartie($partie);
+        $personnePartieResolue->setPersonne($personne);
 
-        // On sauve la table de liaison
+        // On sauve la nouvelle partie et la table de liaison
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($partie);
         $entityManager->persist($personnePartieResolue);
         $entityManager->flush();
 
         // On crée un nouvelle instance d'indice et on la sauve.
-        $indice = new Indices;
+        //Pour cela, on récupére le type d'indice dont l'id est égale à 1 (bouchonnage)
+        $typeIndRepo = $this->getDoctrine()->getRepository(TypeIndice::class);
+        $typeInd = $typeIndRepo->findOneBy(['id' => 1]);
 
-        // V2 :Temporaire : on set le type d'indice à 1.
-        $indice->setTypeIndice(1);
-        $indice->setPartie($partie->getId());
-
-        // V2 : Faire une scrogneugneu de boucle sur une liste d'indice
-
-        $indice->setIndice($indice1);
-        $entityManager->persist($indice);
+        $indice1BO = new Indices;
+        $indice1BO->setTypeIndice($typeInd);
+        $indice1BO->setPartie($partie);
+        $indice1BO->setIndice($indice1);
+        $entityManager->persist($indice1BO);
         $entityManager->flush();
 
-        $indice->setIndice($indice2);
-        $entityManager->persist($indice);
+        $indice2BO = new Indices;
+        $indice2BO->setTypeIndice($typeInd);
+        $indice2BO->setPartie($partie);
+        $indice2BO->setIndice($indice2);
+        $entityManager->persist($indice2BO);
         $entityManager->flush();
+
+        return new \Symfony\Component\HttpFoundation\Response();
     }
 
     //Fonction qui permet de recuperer les indices au chargement de la partie
@@ -186,8 +207,30 @@ class ApiCatController extends Controller
         // On enregistre les coordonnées dans la la table propositionGPS
         $this->setLoc($id, $personne, $latitudeSoumise, $longitudeSoumise);
 
-        // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
+        // On crée l'entité PersonnePartieResolue
+        $personnePartieResolueRepo = $this->getDoctrine()->getRepository(PersonnePartieResolue::class);
+        $personnePartieResolue = $personnePartieResolueRepo->findPPR($id, $personne);
 
+        if(null == $personnePartieResolue){
+            $personnePartieResolue = new PersonnePartieResolue();
+
+            $partieRepo = $this->getDoctrine()->getRepository(Parties::class);
+            $partie = $partieRepo->find($id);
+
+            $personneRepo = $this->getDoctrine()->getRepository(Personnes::class);
+            $qui = $personneRepo->find($personne);
+
+            $personnePartieResolue->setPersonne($qui);
+            $personnePartieResolue->setPartie($partie);
+            $personnePartieResolue->setRole("Joueur");
+            $personnePartieResolue->setResolue(true);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($personnePartieResolue);
+            $entityManager->flush();
+        }
+
+        // On compare ces coordonnées avec les coordonnées solutions de la partie (id partie)
         $found = $this->compareLoc($id, $latitudeSoumise, $longitudeSoumise, $accuracySoumise);
 
         if ($found) {
@@ -227,6 +270,7 @@ class ApiCatController extends Controller
         $propositionGPS = new PropositionGPS();
         $propositionGPS->setLatitude($latitudeSoumise);
         $propositionGPS->setLongitude($longitudeSoumise);
+
         // On récupère l'id de l'entity
         $GPS = $propositionGPS->getId();
 
@@ -303,7 +347,7 @@ class ApiCatController extends Controller
     {
         // La variable $r correspond au rayon de la Terre.
         // $latitudeSoumise, $longitudeSoumise sont les latitudes des points respectifs.
-        // $latitudeSolution, $y$longitudeSolution sont les longitudes des points respectifs.
+        // $latitudeSolution, $longitudeSolution sont les longitudes des points respectifs.
         // $precision permet d'obtenir le nombre de chiffre après la virgule.
         // Elle est définie à 3 par défaut permettant d'obtenir une précision au mètre. Il suffit de la multiplier par 1000.
 

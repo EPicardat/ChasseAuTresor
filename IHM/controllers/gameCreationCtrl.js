@@ -1,4 +1,4 @@
-scotchApp.controller('gameCreationCtrl', function($scope, $http) {
+scotchApp.controller('gameCreationCtrl', function ($scope, $http) {
 
     //Initialisation des variables
     $scope.message = '';
@@ -22,26 +22,25 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
 
     /******************** Post *********************/
 
-    $scope.createGame = function() {
+    $scope.createGame = function () {
         $http({
             method: "POST",
-            url : "http://localhost/Chasseautresor/ChasseAuTresor/public/setGame",
+            url: "http://localhost:8081/Chasseautresor/ChasseAuTresor/public/setGame",
             params: {
-                nom : $scope.nom,
-                lat : $scope.locationCurrent.latitude,
-                lon : $scope.locationCurrent.longitude,
-                acc : $scope.locationCurrent.accuracy,
-                messageFin : $scope.message_fin,
-                img : $scope.photo
+                nom: $scope.nom,
+                lat: $scope.locationCurrent.latitude,
+                lon: $scope.locationCurrent.longitude,
+                acc: $scope.locationCurrent.accuracy,
+                indice1: $scope.indice1,
+                indice2: $scope.indice2,
+                messageFin: $scope.message_fin,
+                img: $scope.photo
             }
-        }).then(function success(){
-            return $http({
-                method : 'GET',
-                url : 'views/partie.html'
-        }), function error() {
-                $scope.message("Erreur dans le formulaire")
-            }
-        });
+        }).then(function success() {
+            window.location.href = "http://localhost:8081/Chasseautresor/IHM/index.html#/partie";
+        }, function error() {
+            $scope.message("Erreur dans le formulaire")
+        })
     };
 
     /******************** Position ********************/
@@ -55,7 +54,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
         $scope.$digest();
     }
 
-    $scope.findPosition = function() {
+    $scope.findPosition = function () {
 
         $scope.attente = true;
         $scope.recherche = true;
@@ -76,7 +75,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
 
     /******************** photo ********************/
 
-    (function() {
+    (function () {
         // The width and height of the captured photo. We will set the
         // width to the value defined here, but the height will be
         // calculated based on the aspect ratio of the input stream.
@@ -105,7 +104,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
             startbutton = document.getElementById('startbutton');
             inputSrc = document.getElementById('inputPhoto');
 
-            navigator.getMedia = ( navigator.getUserMedia ||
+            navigator.getMedia = (navigator.getUserMedia ||
                 navigator.webkitGetUserMedia ||
                 navigator.mozGetUserMedia ||
                 navigator.msGetUserMedia);
@@ -115,7 +114,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
                     video: true,
                     audio: false
                 },
-                function(stream) {
+                function (stream) {
                     if (navigator.mozGetUserMedia) {
                         video.mozSrcObject = stream;
                     } else {
@@ -124,20 +123,20 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
                     }
                     video.play();
                 },
-                function(err) {
+                function (err) {
                     console.log("An error occured! " + err);
                 }
             );
 
-            video.addEventListener('canplay', function(ev){
+            video.addEventListener('canplay', function (ev) {
                 if (!streaming) {
-                    height = video.videoHeight / (video.videoWidth/width);
+                    height = video.videoHeight / (video.videoWidth / width);
 
                     // Firefox currently has a bug where the height can't be read from
                     // the video, so we will make assumptions if this happens.
 
                     if (isNaN(height)) {
-                        height = width / (4/3);
+                        height = width / (4 / 3);
                     }
 
                     video.setAttribute('width', width);
@@ -148,7 +147,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
                 }
             }, false);
 
-            startbutton.addEventListener('click', function(ev){
+            startbutton.addEventListener('click', function (ev) {
                 takepicture();
                 ev.preventDefault();
             }, false);
@@ -187,6 +186,7 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
                 localStorage.setItem(token, data);
                 inputSrc.setAttribute('value', token)
                 $scope.photo = token;
+                $scope.findPosition();
 
             } else {
                 clearphoto();
@@ -208,5 +208,3 @@ scotchApp.controller('gameCreationCtrl', function($scope, $http) {
         window.addEventListener('load', startup, false);
     })();
 });
-
-

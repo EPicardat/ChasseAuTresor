@@ -1,50 +1,49 @@
 <div class="jumbotron text-center">
-  <div ng-if="!partieSelect">
-    <h1>Parties</h1>
-    <button ng-click="createPartie('/create')" > Créer une partie</button>
-    <div ng-repeat="partie in listeParties">
-      <button ng-click="selectPartie(partie)" ng-model="partie"> {{partie.nom}}</button>
-    </div>
-  </div>
-
-  <div ng-if="partieSelect">
-    <div>
-      <h2>
-        Partie n° {{partieSelect.id}} : {{partieSelect.nom}}
-      </h2>
+    <div ng-if="!partieSelect">
+        <h1>Parties</h1>
+        <button ng-click="createPartie('/create')"> Créer une partie</button>
+        <div ng-repeat="partie in listeParties">
+            <button ng-click="selectPartie(partie)" ng-model="partie"> {{partie.nom}}</button>
+        </div>
     </div>
 
-    <div><img ng-src="{{partieSelect.photo}}" alt="carte" id="image-connexion"></div>
-    <div ng-repeat="indice in partieSelect.indices">
-      <button ng-click="toggle(indice)"> Indice {{ indice.id }}</button>
-      <div class="divIndice" ng-hide="!indice.show">{{indice.indice}}</div>
+    <div ng-if="partieSelect && !victoire">
+        <div>
+            <h2>
+                Partie n° {{partieSelect.id}} : {{partieSelect.nom}}
+            </h2>
+        </div>
+
+        <div><img ng-src="{{tokenPhoto}}" alt="carte" id="image-connexion"></div>
+        <div ng-repeat="indice in partieSelect.indices">
+            <button ng-click="toggle(indice)"> Indice {{ indice.id }}</button>
+            <div class="divIndice" ng-hide="!indice.show">{{indice.indice}}</div>
+        </div>
+        <div>{{partieSelect.message}}</div>
+        <div>
+            <button ng-click="findPosition()">Récupère ma position !</button>
+        </div>
+
+        <div ng-if="recherche">
+            <div ng-if="attente" class="loader"></div>
+            <div ng-if="locationFind">
+                <p><strong>Vous êtes plus ou moins ici :</strong></p>
+                <p>Latitude : {{locationCurrent.latitude}}.</p>
+                <p>Longitude : {{locationCurrent.longitude}}.</p>
+                <p>Précision : {{locationCurrent.accuracy}} mètres.</p>
+                <div id="map"></div>
+
+            </div>
+
+            <div ng-if="!attente && !locationFind">
+                {{messageErreur}}
+            </div>
+        </div>
+
+        <div>
+            <button ng-if="locationFind" ng-click="soumettrePosition(locationCurrent)">Soumettre</button>
+        </div>
+
     </div>
-
-    <div>
-      <button ng-click="findPosition()">Récupère ma position !</button>
-    </div>
-
-    <div ng-if="recherche">
-      <div ng-if="attente" class="loader"></div>
-      <div ng-if="locationFind">
-        <p><strong>Vous êtes plus ou moins ici :</strong></p>
-        <p>Latitude : {{locationCurrent.latitude}}.</p>
-        <p>Longitude : {{locationCurrent.longitude}}.</p>
-        <p>Précision : {{locationCurrent.accuracy}} mètres.</p>
-        <div id="map"></div>
-
-      </div>
-
-      <div ng-if="!attente && !locationFind">
-        {{messageErreur}}
-      </div>
-    </div>
-
-    <div>
-      <button ng-if="locationFind" ng-click="soumettrePosition(locationCurrent)">Soumettre</button>
-    </div>
-
-  </div>
-
-  <p>{{ message }}</p>
+    <div ng-if="victoire"><h1>{{partieSelect.messageFin}}</h1></div>
 </div>

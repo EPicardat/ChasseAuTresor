@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Personnes;
 use App\Form\RegisterType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class RegistrationController extends Controller
@@ -39,8 +39,7 @@ class RegistrationController extends Controller
 
             // Add a flash message to confirm the registration.
             $this->addFlash("success", "Your account has been created.");
-
-            return $this->redirect('http://localhost/chasseautresor/IHM/#/connexion');
+            return $this->redirect('http://localhost:8081/chasseautresor/IHM/#/connexion');
         }
 
         return $this->render(
